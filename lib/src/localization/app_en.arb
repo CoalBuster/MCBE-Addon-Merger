@@ -1,0 +1,6 @@
+{
+  "appTitle": "MCBE Addon Merger",
+  "@appTitle": {
+    "description": "The title of the application"
+  }
+}

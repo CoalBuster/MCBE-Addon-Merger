@@ -1,0 +1,4 @@
+enum PackElementType {
+  animationController,
+  entity,
+}
