@@ -4,7 +4,8 @@ import '../controller/pack_controller.dart';
 import '../model/pack_element_type.dart';
 
 class PackView extends StatelessWidget {
-  final Function(PackElementType type, String item)? onElementSelected;
+  final Function(PackElementType type, String path, [String? name])?
+      onElementSelected;
   final PackController packController;
 
   const PackView({
@@ -39,28 +40,64 @@ class PackView extends StatelessWidget {
     return ListView(
       restorationId: 'packContentsListView',
       children: [
-        ExpansionTile(
-          title: const Text('Animation Controllers'),
-          subtitle:
-              Text('${controller.animationControllers.length} controller(s)'),
-          children: controller.animationControllers.entries
-              .map((e) => ListTile(
-                    title: Text(e.key),
-                    onTap: () => onElementSelected?.call(
-                        PackElementType.animationController, e.key),
-                  ))
-              .toList(),
-        ),
-        if (pack.isBehaviorPack)
+        if (controller.animationControllers.isEmpty)
+          const ListTile(
+            title: Text('Animation Controllers'),
+            subtitle: Text('None'),
+            enabled: false,
+          ),
+        if (controller.animationControllers.isNotEmpty)
+          ExpansionTile(
+            title: const Text('Animation Controllers'),
+            subtitle:
+                Text('${controller.animationControllers.length} controller(s)'),
+            children: controller.animationControllers.entries
+                .expand((element) => element.value.entries.map((e) => ListTile(
+                      title: Text(e.key),
+                      subtitle: Text(element.key),
+                      onTap: () => onElementSelected?.call(
+                          PackElementType.animationController,
+                          element.key,
+                          e.key),
+                    )))
+                .toList(),
+          ),
+        if (pack.isBehaviorPack && controller.entities.isEmpty)
+          const ListTile(
+            title: Text('Entities'),
+            subtitle: Text('None'),
+            enabled: false,
+          ),
+        if (pack.isBehaviorPack && controller.entities.isNotEmpty)
           ExpansionTile(
             title: const Text('Enitities'),
             subtitle:
-                Text('${controller.entities.length} (server-side) entities'),
-            children: controller.entities
+                Text('${controller.entities.length} (server-side) entitie(s)'),
+            children: controller.entities.entries
                 .map((e) => ListTile(
-                      title: Text(e.description.identifier),
+                      title: Text(e.value.description.identifier),
+                      subtitle: Text(e.key),
                       onTap: () => onElementSelected?.call(
-                          PackElementType.entity, e.description.identifier),
+                          PackElementType.entity, e.key),
+                    ))
+                .toList(),
+          ),
+        if (pack.isBehaviorPack && controller.items.isEmpty)
+          const ListTile(
+            title: Text('Items'),
+            subtitle: Text('None'),
+            enabled: false,
+          ),
+        if (pack.isBehaviorPack && controller.items.isNotEmpty)
+          ExpansionTile(
+            title: const Text('Items'),
+            subtitle: Text('${controller.items.length} item(s)'),
+            children: controller.items.entries
+                .map((e) => ListTile(
+                      title: Text(e.value.description.identifier),
+                      subtitle: Text(e.key),
+                      onTap: () =>
+                          onElementSelected?.call(PackElementType.item, e.key),
                     ))
                 .toList(),
           ),

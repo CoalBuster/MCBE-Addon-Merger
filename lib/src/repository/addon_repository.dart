@@ -40,9 +40,10 @@ class AddonRepository {
   //   return elements;
   // }
 
-  Future<List<PackElement>> fetchPackElementsAsync(
+  // Future<List<PackElement>> fetchPackElementsAsync(
+  Future<Map<String, PackElement>> fetchPackElementsAsync(
       Directory packDirectory) async {
-    final List<PackElement> result = [];
+    final Map<String, PackElement> result = {};
     final candidates = await packDirectory
         .list(recursive: true)
         .where((e) => e is File)
@@ -54,7 +55,9 @@ class AddonRepository {
       final packElement = await _tryParsePackElementAsync(packElementFile);
 
       if (packElement != null) {
-        result.add(packElement);
+        final elementPath =
+            path.relative(packElementFile.path, from: packDirectory.path);
+        result[elementPath] = packElement;
       }
     }
 

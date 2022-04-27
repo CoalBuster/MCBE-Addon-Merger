@@ -4,9 +4,13 @@ part 'server_entity.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MinecraftServerEntity {
+  final Map<String, dynamic>? componentGroups;
+  final Map<String, dynamic> components;
   final MinecraftServerEntityDescription description;
 
   MinecraftServerEntity({
+    required this.componentGroups,
+    required this.components,
     required this.description,
   });
 

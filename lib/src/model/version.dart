@@ -1,12 +1,12 @@
 class Version {
   final int major;
   final int minor;
-  final int patch;
+  final int? patch;
 
   const Version({
     required this.major,
     required this.minor,
-    required this.patch,
+    this.patch,
   });
 
   static Version fromJson(List<dynamic> version) => Version(
@@ -20,7 +20,7 @@ class Version {
     return Version(
       major: int.parse(split[0]),
       minor: int.parse(split[1]),
-      patch: int.parse(split[2]),
+      patch: split.length < 3 ? null : int.parse(split[2]),
     );
   }
 
@@ -33,5 +33,5 @@ class Version {
   static String toText(Version version) => version.toString();
 
   @override
-  String toString() => '$major.$minor.$patch';
+  String toString() => '$major.$minor${patch == null ? '' : '.$patch'}';
 }

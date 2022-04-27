@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger/src/controller/addon_controller.dart';
-import 'package:mcbe_addon_merger/src/controller/pack_controller.dart';
-import 'package:mcbe_addon_merger/src/layout/animation_controller_layout.dart';
-import 'package:mcbe_addon_merger/src/layout/merger_layout.dart';
-import 'package:mcbe_addon_merger/src/layout/pack_detail_layout.dart';
-import 'package:mcbe_addon_merger/src/layout/pack_explorer_layout.dart';
-import 'package:mcbe_addon_merger/src/model/minecraft/animation_controller.dart';
 
+import 'controller/addon_controller.dart';
+import 'controller/pack_controller.dart';
+import 'layout/merger_layout.dart';
+import 'layout/pack_detail_layout.dart';
+import 'layout/pack_element_layout.dart';
+import 'layout/pack_explorer_layout.dart';
 import 'settings/settings_controller.dart';
 
 class AddonMergerApp extends StatelessWidget {
@@ -62,11 +61,12 @@ class AddonMergerApp extends StatelessWidget {
                       addonController: addonController,
                       packController: packController,
                     );
-                  case AnimationControllerLayout.routeName:
-                    return AnimationControllerLayout(
-                      name: routeSettings.arguments as String,
-                      animationController: packController
-                          .animationControllers[routeSettings.arguments]!,
+                  case PackElementLayout.routeName:
+                    final args = routeSettings.arguments as List<String?>;
+                    return PackElementLayout(
+                      element: packController.element(args[0]!),
+                      path: args[0],
+                      name: args[1],
                     );
                   case MergerLayout.routeName:
                   default:

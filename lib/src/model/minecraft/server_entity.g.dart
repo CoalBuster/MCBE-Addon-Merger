@@ -9,6 +9,8 @@ part of 'server_entity.dart';
 MinecraftServerEntity _$MinecraftServerEntityFromJson(
         Map<String, dynamic> json) =>
     MinecraftServerEntity(
+      componentGroups: json['component_groups'] as Map<String, dynamic>?,
+      components: json['components'] as Map<String, dynamic>,
       description: MinecraftServerEntityDescription.fromJson(
           json['description'] as Map<String, dynamic>),
     );
@@ -16,6 +18,8 @@ MinecraftServerEntity _$MinecraftServerEntityFromJson(
 Map<String, dynamic> _$MinecraftServerEntityToJson(
         MinecraftServerEntity instance) =>
     <String, dynamic>{
+      'component_groups': instance.componentGroups,
+      'components': instance.components,
       'description': instance.description,
     };
 

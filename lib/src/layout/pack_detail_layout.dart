@@ -5,7 +5,7 @@ import '../controller/pack_controller.dart';
 import '../model/pack_element_type.dart';
 import '../view/manifest_view.dart';
 import '../view/pack_view.dart';
-import 'animation_controller_layout.dart';
+import 'pack_element_layout.dart';
 
 class PackDetailLayout extends StatefulWidget {
   static const routeName = '/pack';
@@ -62,8 +62,8 @@ class _PackDetailLayoutState extends State<PackDetailLayout> {
               Expanded(
                 child: PackView(
                   packController: widget.packController,
-                  onElementSelected: (type, item) =>
-                      _onElementSelected(context, type, item),
+                  onElementSelected: (type, path, [name]) =>
+                      _onElementSelected(context, type, path, name),
                 ),
               ),
             ],
@@ -74,18 +74,25 @@ class _PackDetailLayoutState extends State<PackDetailLayout> {
   }
 
   void _onElementSelected(
-      BuildContext context, PackElementType type, String item) {
-    switch (type) {
-      case PackElementType.animationController:
-        Navigator.restorablePushNamed(
-          context,
-          AnimationControllerLayout.routeName,
-          arguments: item,
-        );
-        break;
-      default:
-        widget.logger.w('Unhandled PackElementType $type');
-        break;
-    }
+      BuildContext context, PackElementType type, String path, String? name) {
+    // switch (type) {
+    //   case PackElementType.animationController:
+    //     Navigator.restorablePushNamed(
+    //       context,
+    //       AnimationControllerLayout.routeName,
+    //       arguments: item,
+    //     );
+    //     break;
+    //   case PackElementType.entity:
+    Navigator.restorablePushNamed(
+      context,
+      PackElementLayout.routeName,
+      arguments: [path, name],
+    );
+    //     break;
+    //   default:
+    //     widget.logger.w('Unhandled PackElementType $type');
+    //     break;
+    // }
   }
 }

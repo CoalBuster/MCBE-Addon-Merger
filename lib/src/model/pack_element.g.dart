@@ -17,6 +17,10 @@ PackElement _$PackElementFromJson(Map<String, dynamic> json) => PackElement(
           ? null
           : MinecraftServerEntity.fromJson(
               json['minecraft:entity'] as Map<String, dynamic>),
+      item: json['minecraft:item'] == null
+          ? null
+          : MinecraftItem.fromJson(
+              json['minecraft:item'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$PackElementToJson(PackElement instance) =>
@@ -24,4 +28,5 @@ Map<String, dynamic> _$PackElementToJson(PackElement instance) =>
       'animation_controllers': instance.animationControllers,
       'format_version': Version.toText(instance.formatVersion),
       'minecraft:entity': instance.entity,
+      'minecraft:item': instance.item,
     };
