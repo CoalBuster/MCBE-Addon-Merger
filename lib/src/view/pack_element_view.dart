@@ -5,6 +5,7 @@ import '../model/pack_element_type.dart';
 import 'animation_controller_view.dart';
 import 'entity_view.dart';
 import 'item_view.dart';
+import 'loot_table_view.dart';
 
 class PackElementDetailView extends StatelessWidget {
   final PackElement? element;
@@ -43,6 +44,11 @@ class PackElementDetailView extends StatelessWidget {
       case PackElementType.item:
         return ItemDetailView(
           item: element!.item!,
+          formatVersion: element!.formatVersion,
+        );
+      case PackElementType.lootTable:
+        return LootTableDetailView(
+          pools: element!.lootTables!,
           formatVersion: element!.formatVersion,
         );
       default:

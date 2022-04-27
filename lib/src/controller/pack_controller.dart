@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 
 import '../model/minecraft/animation_controller.dart';
 import '../model/minecraft/item.dart';
+import '../model/minecraft/loot_table.dart';
 import '../model/minecraft/server_entity.dart';
 import '../model/pack.dart';
 import '../model/pack_element.dart';
@@ -13,7 +14,6 @@ class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
   final Logger logger;
 
-  // List<PackElement> _elements = [];
   Map<String, PackElement> _elements = {};
   String? _error;
   bool _loading = false;
@@ -40,6 +40,11 @@ class PackController with ChangeNotifier {
       Map.fromEntries(elements(PackElementType.item)
           .entries
           .map((e) => MapEntry(e.key, e.value.item!)));
+
+  Map<String, List<MinecraftLootTable>> get lootTables =>
+      Map.fromEntries(elements(PackElementType.lootTable)
+          .entries
+          .map((e) => MapEntry(e.key, e.value.lootTables!)));
 
   String? get errorMessage => _error;
   bool get loading => _loading;

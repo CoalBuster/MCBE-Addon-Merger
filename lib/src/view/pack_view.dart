@@ -49,8 +49,8 @@ class PackView extends StatelessWidget {
         if (controller.animationControllers.isNotEmpty)
           ExpansionTile(
             title: const Text('Animation Controllers'),
-            subtitle:
-                Text('${controller.animationControllers.length} controller(s)'),
+            subtitle: Text(
+                '${controller.animationControllers.entries.expand((e) => e.value.entries).length} controller(s)'),
             children: controller.animationControllers.entries
                 .expand((element) => element.value.entries.map((e) => ListTile(
                       title: Text(e.key),
@@ -71,8 +71,8 @@ class PackView extends StatelessWidget {
         if (pack.isBehaviorPack && controller.entities.isNotEmpty)
           ExpansionTile(
             title: const Text('Enitities'),
-            subtitle:
-                Text('${controller.entities.length} (server-side) entitie(s)'),
+            subtitle: Text(
+                '${controller.entities.length} (server-side) ${_plural('entity', 'entities', controller.entities.length)}'),
             children: controller.entities.entries
                 .map((e) => ListTile(
                       title: Text(e.value.description.identifier),
@@ -101,7 +101,30 @@ class PackView extends StatelessWidget {
                     ))
                 .toList(),
           ),
+        if (pack.isBehaviorPack && controller.lootTables.isEmpty)
+          const ListTile(
+            title: Text('Loot Tables'),
+            subtitle: Text('None'),
+            enabled: false,
+          ),
+        if (pack.isBehaviorPack && controller.lootTables.isNotEmpty)
+          ExpansionTile(
+            title: const Text('Loot Tables'),
+            subtitle: Text('${controller.lootTables.length} pool(s)'),
+            children: controller.lootTables.entries
+                .map((e) => ListTile(
+                      title: Text(e.key),
+                      subtitle: Text(
+                          '${e.value.length} ${_plural('entry', 'entries', e.value.length)}'),
+                      onTap: () =>
+                          onElementSelected?.call(PackElementType.item, e.key),
+                    ))
+                .toList(),
+          ),
       ],
     );
   }
+
+  String _plural(String singleVariant, String multipleVariant, int count) =>
+      count == 1 ? singleVariant : multipleVariant;
 }

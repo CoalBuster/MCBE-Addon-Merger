@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'minecraft/animation_controller.dart';
 import 'minecraft/item.dart';
+import 'minecraft/loot_table.dart';
 import 'minecraft/server_entity.dart';
 import 'pack_element_type.dart';
 import 'version.dart';
@@ -12,17 +13,20 @@ part 'pack_element.g.dart';
 class PackElement {
   final Map<String, MinecraftAnimationController>? animationControllers;
   @JsonKey(fromJson: Version.fromText, toJson: Version.toText)
-  final Version formatVersion;
+  final Version? formatVersion;
   @JsonKey(name: 'minecraft:entity')
   final MinecraftServerEntity? entity;
   @JsonKey(name: 'minecraft:item')
   final MinecraftItem? item;
+  @JsonKey(name: 'pools')
+  final List<MinecraftLootTable>? lootTables;
 
   PackElement({
     required this.formatVersion,
     this.animationControllers,
     this.entity,
     this.item,
+    this.lootTables,
   });
 
   factory PackElement.fromJson(Map<String, dynamic> json) =>
@@ -41,6 +45,10 @@ class PackElement {
 
     if (item != null) {
       return PackElementType.item;
+    }
+
+    if (lootTables != null) {
+      return PackElementType.lootTable;
     }
 
     return null;

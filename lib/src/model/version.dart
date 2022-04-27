@@ -15,7 +15,11 @@ class Version {
         patch: version[2],
       );
 
-  static Version fromText(String version) {
+  static Version? fromText(String? version) {
+    if (version == null) {
+      return null;
+    }
+
     final split = version.split('.');
     return Version(
       major: int.parse(split[0]),
@@ -30,7 +34,7 @@ class Version {
         version.patch,
       ];
 
-  static String toText(Version version) => version.toString();
+  static String toText(Version? version) => version.toString();
 
   @override
   String toString() => '$major.$minor${patch == null ? '' : '.$patch'}';
