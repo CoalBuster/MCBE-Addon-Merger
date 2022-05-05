@@ -25,7 +25,7 @@ class PackElementLayout extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(_typeString(element?.type) ?? 'Pack Element Details'),
+            Text(element?.type?.asString() ?? 'Pack Element Details'),
             if (path != null)
               Text(
                 path!,
@@ -39,16 +39,5 @@ class PackElementLayout extends StatelessWidget {
         name: name,
       ),
     );
-  }
-
-  static String? _typeString(PackElementType? type) {
-    switch (type) {
-      case PackElementType.animationController:
-        return 'Animation Controller';
-      case PackElementType.entity:
-        return 'Entity';
-      default:
-        return null;
-    }
   }
 }

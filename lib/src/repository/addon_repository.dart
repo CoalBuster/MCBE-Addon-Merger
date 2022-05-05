@@ -5,10 +5,12 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
 import 'package:mcbe_addon_merger/src/model/manifest.dart';
+import 'package:mcbe_addon_merger/src/model/minecraft/functions.dart';
 import 'package:path/path.dart' as path;
 
 import '../model/pack.dart';
 import '../model/pack_element.dart';
+import '../model/pack_element_type.dart';
 
 class AddonRepository {
   static const manifestFileName = 'manifest.json';
@@ -128,9 +130,23 @@ class AddonRepository {
       final json = jsonDecode(contents);
       final element = PackElement.fromJson(json);
 
-      logger.i('Successfully parsed PackElement ${path.basename(file.path)}');
+      // logger.i('[${element.type?.asString()}] ${path.basename(file.path)}');
+
+      if (element.type == PackElementType.lootTable) {
+        for (var f in element.lootTables!
+            .expand((l) => l.entries)
+            .expand((e) => e.functions ?? [])
+            .whereType<MinecraftFunctionUnknown>()) {
+          logger.w(
+              'Unparsed Loot Funtion "${f.function}" @ ${path.basename(file.path)}');
+        }
+      }
       return element;
+    } on FormatException catch (e) {
+      // logger.w('Could not parse ${path.basename(file.path)}: ${e.message}');
+      return null;
     } catch (e) {
+      // logger.w('Could not parse ${path.basename(file.path)}: $e');
       return null;
     }
   }

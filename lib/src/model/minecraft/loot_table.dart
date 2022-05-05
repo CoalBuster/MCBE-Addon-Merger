@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mcbe_addon_merger/src/model/range.dart';
 
 import '../count_or_range.dart';
+import 'functions.dart';
 
 part 'loot_table.g.dart';
 
@@ -26,7 +26,7 @@ class MinecraftLootTable {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MinecraftLootPoolEntry {
-  final List<MinecraftLootFunction>? functions;
+  final List<MinecraftFunction>? functions;
   final String? name;
   final String type;
   final int weight;
@@ -38,12 +38,7 @@ class MinecraftLootPoolEntry {
     this.name,
   });
 
-  CountOrRange? get count {
-    final c = functions?.where((f) =>
-        f.function == MinecraftLootFuntionType.setCount ||
-        f.function == MinecraftLootFuntionType.setCount2);
-    return (c?.isNotEmpty ?? false) ? c!.first.count : null;
-  }
+  bool get isEmpty => name == null;
 
   factory MinecraftLootPoolEntry.fromJson(Map<String, dynamic> json) =>
       _$MinecraftLootPoolEntryFromJson(json);
@@ -51,49 +46,49 @@ class MinecraftLootPoolEntry {
   Map<String, dynamic> toJson() => _$MinecraftLootPoolEntryToJson(this);
 }
 
-@JsonSerializable(fieldRename: FieldRename.snake)
-class MinecraftLootFunction {
-  final CountOrRange? count;
-  final DoubleRange? damage;
-  final int? data;
-  final String? destination;
-  final MinecraftLootFuntionType function;
-  final CountOrRange? levels;
-  final bool? treasure;
-  final IntegerRange? values;
+// @JsonSerializable(fieldRename: FieldRename.snake)
+// class MinecraftLootFunction {
+//   final CountOrRange? count;
+//   final DoubleRange? damage;
+//   final int? data;
+//   final String? destination;
+//   final MinecraftLootFuntionType function;
+//   final CountOrRange? levels;
+//   final bool? treasure;
+//   final IntegerRange? values;
 
-  MinecraftLootFunction({
-    required this.function,
-    this.count,
-    this.damage,
-    this.destination,
-    this.data,
-    this.levels,
-    this.treasure,
-    this.values,
-  });
+//   MinecraftLootFunction({
+//     required this.function,
+//     this.count,
+//     this.damage,
+//     this.destination,
+//     this.data,
+//     this.levels,
+//     this.treasure,
+//     this.values,
+//   });
 
-  factory MinecraftLootFunction.fromJson(Map<String, dynamic> json) =>
-      _$MinecraftLootFunctionFromJson(json);
+//   factory MinecraftLootFunction.fromJson(Map<String, dynamic> json) =>
+//       _$MinecraftLootFunctionFromJson(json);
 
-  Map<String, dynamic> toJson() => _$MinecraftLootFunctionToJson(this);
-}
+//   Map<String, dynamic> toJson() => _$MinecraftLootFunctionToJson(this);
+// }
 
-@JsonEnum(fieldRename: FieldRename.snake)
-enum MinecraftLootFuntionType {
-  enchantRandomly,
-  @JsonValue('minecraft:enchant_randomly')
-  enchantRandomly2,
-  enchantWithLevels,
-  explorationMap,
-  randomAuxValue,
-  setCount,
-  @JsonValue('minecraft:set_count')
-  setCount2,
-  @JsonValue('minecraft:set_damage')
-  setDamage,
-  setData,
-  @JsonValue('minecraft:set_data')
-  setData2,
-  specificEnchants,
-}
+// @JsonEnum(fieldRename: FieldRename.snake)
+// enum MinecraftLootFuntionType {
+//   enchantRandomly,
+//   @JsonValue('minecraft:enchant_randomly')
+//   enchantRandomly2,
+//   enchantWithLevels,
+//   explorationMap,
+//   randomAuxValue,
+//   setCount,
+//   @JsonValue('minecraft:set_count')
+//   setCount2,
+//   @JsonValue('minecraft:set_damage')
+//   setDamage,
+//   setData,
+//   @JsonValue('minecraft:set_data')
+//   setData2,
+//   specificEnchants,
+// }

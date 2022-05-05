@@ -53,12 +53,11 @@ class LootTablePoolEntryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chance = (entry.weight / totalWeight * 100).toStringAsFixed(2);
-    final count =
-        entry.count == null ? '1' : '${entry.count!.min}-${entry.count!.max}';
+    final functions = entry.functions?.map((e) => e.toString()).join(' | ');
 
     return ListTile(
-      title: Text(entry.name ?? 'Nothing'),
-      subtitle: Text('$chance% chance to get a stack of $count'),
+      title: Text('${entry.name ?? 'Nothing'} ($chance%)'),
+      subtitle: (entry.isEmpty || functions == null) ? null : Text(functions),
     );
   }
 }
