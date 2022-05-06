@@ -7,7 +7,7 @@ import '../view/manifest_view.dart';
 import '../view/pack_view.dart';
 import 'pack_element_layout.dart';
 
-class PackDetailLayout extends StatefulWidget {
+class PackDetailLayout extends StatelessWidget {
   static const routeName = '/pack';
 
   final Logger logger;
@@ -20,27 +20,19 @@ class PackDetailLayout extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PackDetailLayoutState();
-}
-
-class _PackDetailLayoutState extends State<PackDetailLayout> {
-  PackElementType? selected;
-  int? index;
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pack Details'),
       ),
       body: AnimatedBuilder(
-        animation: widget.packController,
+        animation: packController,
         builder: (context, child) {
-          final pack = widget.packController.pack;
+          final pack = packController.pack;
 
           if (pack == null) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: Text('No Pack selected'),
             );
           }
 
@@ -49,19 +41,10 @@ class _PackDetailLayoutState extends State<PackDetailLayout> {
               ManifestView(
                 manifest: pack.manifest,
               ),
-              if (selected != null)
-                ListTile(
-                  leading: BackButton(
-                    onPressed: () => setState(() {
-                      selected = index == null ? null : selected;
-                      index = null;
-                    }),
-                  ),
-                  title: Text(selected!.name),
-                ),
+              const Divider(),
               Expanded(
                 child: PackView(
-                  packController: widget.packController,
+                  packController: packController,
                   onElementSelected: (type, path, [name]) =>
                       _onElementSelected(context, type, path, name),
                 ),
@@ -75,24 +58,10 @@ class _PackDetailLayoutState extends State<PackDetailLayout> {
 
   void _onElementSelected(
       BuildContext context, PackElementType type, String path, String? name) {
-    // switch (type) {
-    //   case PackElementType.animationController:
-    //     Navigator.restorablePushNamed(
-    //       context,
-    //       AnimationControllerLayout.routeName,
-    //       arguments: item,
-    //     );
-    //     break;
-    //   case PackElementType.entity:
     Navigator.restorablePushNamed(
       context,
       PackElementLayout.routeName,
       arguments: [path, name],
     );
-    //     break;
-    //   default:
-    //     widget.logger.w('Unhandled PackElementType $type');
-    //     break;
-    // }
   }
 }
