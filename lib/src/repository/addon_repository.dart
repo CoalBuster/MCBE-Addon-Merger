@@ -134,6 +134,10 @@ class AddonRepository {
       final json = jsonDecode(contents);
       final element = PackElement.fromJson(json);
 
+      if (element.type == null) {
+        return null;
+      }
+
       // logger.i('[${element.type?.asString()}] ${path.basename(file.path)}');
       return element;
     } on FormatException catch (e) {
