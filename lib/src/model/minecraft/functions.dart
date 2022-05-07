@@ -29,10 +29,13 @@ class MinecraftFunction {
         return MinecraftFunctionEnchant.fromJson(json);
       case 'enchant_randomly':
       case 'minecraft:enchant_randomly':
+      case 'enchant_random_gear':
       case 'enchant_with_levels':
         return MinecraftFunctionEnchantRandomly.fromJson(json);
       case 'exploration_map':
         return MinecraftFunctionExploration.fromJson(json);
+      case 'looting_enchant':
+        return MinecraftFunctionLooting.fromJson(json);
       case 'random_aux_value':
         return MinecraftFunctionRandomAux.fromJson(json);
       default:
@@ -126,11 +129,13 @@ class MinecraftFunctionEnchant extends MinecraftFunction {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MinecraftFunctionEnchantRandomly extends MinecraftFunction {
-  final IntegerRange? levels;
+  final double? chance;
+  final CountOrRange? levels;
   final bool treasure;
 
   MinecraftFunctionEnchantRandomly({
     required String function,
+    this.chance,
     this.levels,
     this.treasure = false,
   }) : super(function: function);
@@ -146,7 +151,8 @@ class MinecraftFunctionEnchantRandomly extends MinecraftFunction {
   @override
   String toString() =>
       (treasure ? 'Treasure Enchantment' : 'Randomly Enchanted') +
-      (levels == null ? '' : ' (lvl: ${levels!.min} - ${levels!.max})');
+      (levels == null ? '' : ' (lvl: $levels)') +
+      (chance == null ? '' : ' (${chance! * 100}% chance)');
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -166,6 +172,25 @@ class MinecraftFunctionExploration extends MinecraftFunction {
 
   @override
   String toString() => 'Exploration to: $destination';
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class MinecraftFunctionLooting extends MinecraftFunction {
+  final IntegerRange count;
+
+  MinecraftFunctionLooting({
+    required String function,
+    required this.count,
+  }) : super(function: function);
+
+  factory MinecraftFunctionLooting.fromJson(Map<String, dynamic> json) =>
+      _$MinecraftFunctionLootingFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$MinecraftFunctionLootingToJson(this);
+
+  @override
+  String toString() => 'Looting: +${count.min}-${count.max} per lvl';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -199,7 +224,7 @@ class MinecraftFunctionUnknown extends MinecraftFunction {
   Map<String, dynamic> toJson() => _$MinecraftFunctionUnknownToJson(this);
 
   @override
-  String toString() => '<unknown function>';
+  String toString() => '<$function>';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
@@ -215,38 +240,9 @@ class MinecraftEnchantment {
   factory MinecraftEnchantment.fromJson(Map<String, dynamic> json) =>
       _$MinecraftEnchantmentFromJson(json);
 
-  @override
   Map<String, dynamic> toJson() => _$MinecraftEnchantmentToJson(this);
 
   @override
   String toString() =>
       '$id (${level.map((e) => e.toRomanNumeralString()).join(' - ')})';
 }
-
-// @JsonSerializable(fieldRename: FieldRename.snake)
-// class MinecraftLootFunction {
-//   final CountOrRange? count;
-//   final DoubleRange? damage;
-//   final int? data;
-//   final String? destination;
-//   final MinecraftLootFuntionType function;
-//   final CountOrRange? levels;
-//   final bool? treasure;
-//   final IntegerRange? values;
-
-//   MinecraftLootFunction({
-//     required this.function,
-//     this.count,
-//     this.damage,
-//     this.destination,
-//     this.data,
-//     this.levels,
-//     this.treasure,
-//     this.values,
-//   });
-
-//   factory MinecraftLootFunction.fromJson(Map<String, dynamic> json) =>
-//       _$MinecraftLootFunctionFromJson(json);
-
-//   Map<String, dynamic> toJson() => _$MinecraftLootFunctionToJson(this);
-// }

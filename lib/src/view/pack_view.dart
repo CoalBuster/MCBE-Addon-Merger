@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../controller/pack_controller.dart';
 import '../model/pack_element_type.dart';
+import '../util/pluralizer.dart';
 
 class PackView extends StatelessWidget {
   final Function(PackElementType type, String path, [String? name])?
@@ -71,8 +72,8 @@ class PackView extends StatelessWidget {
         if (pack.isBehaviorPack && controller.entities.isNotEmpty)
           ExpansionTile(
             title: const Text('Enitities'),
-            subtitle: Text(
-                '${controller.entities.length} (server-side) ${_plural('entity', 'entities', controller.entities.length)}'),
+            subtitle: Text(controller.entities.length
+                .pluralText('entity', 'entities', '(server-side)')),
             children: controller.entities.entries
                 .map((e) => ListTile(
                       title: Text(e.value.description.identifier),
@@ -91,7 +92,7 @@ class PackView extends StatelessWidget {
         if (pack.isBehaviorPack && controller.items.isNotEmpty)
           ExpansionTile(
             title: const Text('Items'),
-            subtitle: Text('${controller.items.length} item(s)'),
+            subtitle: Text(controller.items.length.pluralText('item', 'items')),
             children: controller.items.entries
                 .map((e) => ListTile(
                       title: Text(e.value.description.identifier),
@@ -110,12 +111,13 @@ class PackView extends StatelessWidget {
         if (pack.isBehaviorPack && controller.lootTables.isNotEmpty)
           ExpansionTile(
             title: const Text('Loot Tables'),
-            subtitle: Text('${controller.lootTables.length} pool(s)'),
+            subtitle:
+                Text(controller.lootTables.length.pluralText('pool', 'pools')),
             children: controller.lootTables.entries
                 .map((e) => ListTile(
                       title: Text(e.key),
-                      subtitle: Text(
-                          '${e.value.length} ${_plural('entry', 'entries', e.value.length)}'),
+                      subtitle:
+                          Text(e.value.length.pluralText('pool', 'pools')),
                       onTap: () =>
                           onElementSelected?.call(PackElementType.item, e.key),
                     ))
@@ -124,7 +126,4 @@ class PackView extends StatelessWidget {
       ],
     );
   }
-
-  String _plural(String singleVariant, String multipleVariant, int count) =>
-      count == 1 ? singleVariant : multipleVariant;
 }

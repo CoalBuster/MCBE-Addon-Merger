@@ -4,13 +4,11 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger/src/model/manifest.dart';
-import 'package:mcbe_addon_merger/src/model/minecraft/functions.dart';
 import 'package:path/path.dart' as path;
 
+import '../model/manifest.dart';
 import '../model/pack.dart';
 import '../model/pack_element.dart';
-import '../model/pack_element_type.dart';
 
 class AddonRepository {
   static const manifestFileName = 'manifest.json';
@@ -22,27 +20,6 @@ class AddonRepository {
     required this.logger,
   });
 
-  // Future<List<PackElement>> fetchServerEntitiesAsync(
-  //     Iterable<File> filesToParse) async {
-  //   final List<PackElement> elements = [];
-
-  //   for (var file in filesToParse) {
-  //     logger.d('Try to parse element ${path.basename(file.path)} ..');
-  //     try {
-  //       final contents = await file.readAsString();
-  //       final json = jsonDecode(contents);
-  //       final element = PackElement.fromJson(json);
-
-  //       elements.add(element);
-  //     } catch (e) {
-  //       logger.d('Failed to parse element', e);
-  //     }
-  //   }
-
-  //   return elements;
-  // }
-
-  // Future<List<PackElement>> fetchPackElementsAsync(
   Future<Map<String, PackElement>> fetchPackElementsAsync(
       Directory packDirectory) async {
     final Map<String, PackElement> result = {};
@@ -50,6 +27,7 @@ class AddonRepository {
         .list(recursive: true)
         .where((e) => e is File)
         .cast<File>()
+        .where((f) => path.basename(f.path) != manifestFileName)
         .where((f) => path.extension(f.path) == packElementExtension)
         .toList();
 
@@ -131,22 +109,12 @@ class AddonRepository {
       final element = PackElement.fromJson(json);
 
       // logger.i('[${element.type?.asString()}] ${path.basename(file.path)}');
-
-      if (element.type == PackElementType.lootTable) {
-        for (var f in element.lootTables!
-            .expand((l) => l.entries)
-            .expand((e) => e.functions ?? [])
-            .whereType<MinecraftFunctionUnknown>()) {
-          logger.w(
-              'Unparsed Loot Funtion "${f.function}" @ ${path.basename(file.path)}');
-        }
-      }
       return element;
     } on FormatException catch (e) {
-      // logger.w('Could not parse ${path.basename(file.path)}: ${e.message}');
+      logger.w('Could not parse ${path.basename(file.path)}: ${e.message}');
       return null;
     } catch (e) {
-      // logger.w('Could not parse ${path.basename(file.path)}: $e');
+      logger.w('Could not parse ${path.basename(file.path)}: $e');
       return null;
     }
   }

@@ -2,21 +2,34 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../count_or_range.dart';
 import 'functions.dart';
+import 'loot_condition.dart';
 
 part 'loot_table.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class MinecraftLootTable {
-  final List<MinecraftLootPoolEntry> entries;
+  final List<MinecraftLootCondition>? conditions;
+  final List<MinecraftLootPoolEntry>? entries;
   final CountOrRange? rolls;
+  final MinecraftLootPoolTier? tiers;
 
   MinecraftLootTable({
-    required this.entries,
-    required this.rolls,
+    this.entries,
+    this.conditions,
+    this.rolls,
+    this.tiers,
   });
 
+  bool get isEmpty =>
+      entries == null || entries!.isEmpty || (rolls == null && tiers == null);
+
+  bool get isTiered => tiers != null;
+
   int get totalWeight =>
-      entries.map((e) => e.weight).reduce((value, element) => value + element);
+      entries
+          ?.map((e) => e.weight)
+          .reduce((value, element) => value + element) ??
+      0;
 
   factory MinecraftLootTable.fromJson(Map<String, dynamic> json) =>
       _$MinecraftLootTableFromJson(json);
@@ -25,10 +38,32 @@ class MinecraftLootTable {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
+class MinecraftLootPoolTier {
+  final double bonusChance;
+  final int bonusRolls;
+  final int initialRange;
+
+  MinecraftLootPoolTier({
+    this.bonusChance = 0,
+    this.bonusRolls = 0,
+    this.initialRange = 1,
+  });
+
+  CountOrRange get start => initialRange == 1
+      ? const CountOrRange.count(1)
+      : CountOrRange.range(1, initialRange);
+
+  factory MinecraftLootPoolTier.fromJson(Map<String, dynamic> json) =>
+      _$MinecraftLootPoolTierFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MinecraftLootPoolTierToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
 class MinecraftLootPoolEntry {
   final List<MinecraftFunction>? functions;
   final String? name;
-  final String type;
+  final MinecraftLootType type;
   final int weight;
 
   MinecraftLootPoolEntry({
@@ -38,57 +73,15 @@ class MinecraftLootPoolEntry {
     this.name,
   });
 
-  bool get isEmpty => name == null;
-
   factory MinecraftLootPoolEntry.fromJson(Map<String, dynamic> json) =>
       _$MinecraftLootPoolEntryFromJson(json);
 
   Map<String, dynamic> toJson() => _$MinecraftLootPoolEntryToJson(this);
 }
 
-// @JsonSerializable(fieldRename: FieldRename.snake)
-// class MinecraftLootFunction {
-//   final CountOrRange? count;
-//   final DoubleRange? damage;
-//   final int? data;
-//   final String? destination;
-//   final MinecraftLootFuntionType function;
-//   final CountOrRange? levels;
-//   final bool? treasure;
-//   final IntegerRange? values;
-
-//   MinecraftLootFunction({
-//     required this.function,
-//     this.count,
-//     this.damage,
-//     this.destination,
-//     this.data,
-//     this.levels,
-//     this.treasure,
-//     this.values,
-//   });
-
-//   factory MinecraftLootFunction.fromJson(Map<String, dynamic> json) =>
-//       _$MinecraftLootFunctionFromJson(json);
-
-//   Map<String, dynamic> toJson() => _$MinecraftLootFunctionToJson(this);
-// }
-
-// @JsonEnum(fieldRename: FieldRename.snake)
-// enum MinecraftLootFuntionType {
-//   enchantRandomly,
-//   @JsonValue('minecraft:enchant_randomly')
-//   enchantRandomly2,
-//   enchantWithLevels,
-//   explorationMap,
-//   randomAuxValue,
-//   setCount,
-//   @JsonValue('minecraft:set_count')
-//   setCount2,
-//   @JsonValue('minecraft:set_damage')
-//   setDamage,
-//   setData,
-//   @JsonValue('minecraft:set_data')
-//   setData2,
-//   specificEnchants,
-// }
+@JsonEnum(fieldRename: FieldRename.snake)
+enum MinecraftLootType {
+  empty,
+  item,
+  lootTable,
+}

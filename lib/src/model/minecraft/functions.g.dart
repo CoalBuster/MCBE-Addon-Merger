@@ -68,9 +68,9 @@ MinecraftFunctionEnchantRandomly _$MinecraftFunctionEnchantRandomlyFromJson(
         Map<String, dynamic> json) =>
     MinecraftFunctionEnchantRandomly(
       function: json['function'] as String,
-      levels: json['levels'] == null
-          ? null
-          : IntegerRange.fromJson(json['levels'] as Map<String, dynamic>),
+      chance: (json['chance'] as num?)?.toDouble(),
+      levels:
+          json['levels'] == null ? null : CountOrRange.fromJson(json['levels']),
       treasure: json['treasure'] as bool? ?? false,
     );
 
@@ -78,6 +78,7 @@ Map<String, dynamic> _$MinecraftFunctionEnchantRandomlyToJson(
         MinecraftFunctionEnchantRandomly instance) =>
     <String, dynamic>{
       'function': instance.function,
+      'chance': instance.chance,
       'levels': instance.levels,
       'treasure': instance.treasure,
     };
@@ -94,6 +95,20 @@ Map<String, dynamic> _$MinecraftFunctionExplorationToJson(
     <String, dynamic>{
       'function': instance.function,
       'destination': instance.destination,
+    };
+
+MinecraftFunctionLooting _$MinecraftFunctionLootingFromJson(
+        Map<String, dynamic> json) =>
+    MinecraftFunctionLooting(
+      function: json['function'] as String,
+      count: IntegerRange.fromJson(json['count'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$MinecraftFunctionLootingToJson(
+        MinecraftFunctionLooting instance) =>
+    <String, dynamic>{
+      'function': instance.function,
+      'count': instance.count,
     };
 
 MinecraftFunctionRandomAux _$MinecraftFunctionRandomAuxFromJson(
