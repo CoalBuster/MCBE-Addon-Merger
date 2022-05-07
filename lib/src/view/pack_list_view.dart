@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as path;
 
 import '../model/pack.dart';
 
@@ -22,8 +25,10 @@ class PackListView extends StatelessWidget {
 
         return ListTile(
           title: Text(pack.manifest.header.name),
-          leading: const CircleAvatar(
-            foregroundImage: AssetImage('assets/images/flutter_logo.png'),
+          leading: CircleAvatar(
+            backgroundImage: FileImage(
+              File(path.absolute(pack.directory.path, 'pack_icon.png')),
+            ),
           ),
           subtitle: Text('v${pack.manifest.header.version} | ' +
               (pack.isBehaviorPack

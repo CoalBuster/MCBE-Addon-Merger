@@ -4,6 +4,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger/src/model/pack_content.dart';
+import 'package:mcbe_addon_merger/src/model/pack_image.dart';
 import 'package:path/path.dart' as path;
 
 import '../model/manifest.dart';
@@ -11,8 +13,18 @@ import '../model/pack.dart';
 import '../model/pack_element.dart';
 
 class AddonRepository {
+  static const ignoredDirectories = [
+    '.git',
+    'documentation',
+  ];
+  static const ignoredFiles = [
+    '.gitignore',
+    'changelog.md',
+    'readme.md',
+  ];
   static const manifestFileName = 'manifest.json';
-  static const packElementExtension = '.json';
+  static const packFileExtensionElement = '.json';
+  static const packFileExtensionImage = '.png';
 
   final Logger logger;
 
@@ -20,28 +32,46 @@ class AddonRepository {
     required this.logger,
   });
 
-  Future<Map<String, PackElement>> fetchPackElementsAsync(
-      Directory packDirectory) async {
-    final Map<String, PackElement> result = {};
-    final candidates = await packDirectory
+  Future<PackContent> fetchPackContentAsync(Pack pack) async {
+    final Map<String, dynamic> result = {};
+    final packFiles = await pack.directory
         .list(recursive: true)
         .where((e) => e is File)
         .cast<File>()
+        .where(
+            (f) => !ignoredFiles.contains(path.basename(f.path).toLowerCase()))
+        .where((f) => !path
+            .split(path.dirname(f.path))
+            .any((part) => ignoredDirectories.contains(part.toLowerCase())))
         .where((f) => path.basename(f.path) != manifestFileName)
-        .where((f) => path.extension(f.path) == packElementExtension)
         .toList();
 
-    for (var packElementFile in candidates) {
-      final packElement = await _tryParsePackElementAsync(packElementFile);
+    for (var packFile in packFiles) {
+      final packFilePath =
+          path.relative(packFile.path, from: pack.directory.path);
+      final packFileExtension = path.extension(packFile.path);
 
-      if (packElement != null) {
-        final elementPath =
-            path.relative(packElementFile.path, from: packDirectory.path);
-        result[elementPath] = packElement;
+      switch (packFileExtension) {
+        case packFileExtensionElement:
+          final packElement = await _tryParsePackElementAsync(packFile);
+
+          if (packElement != null) {
+            result[packFilePath] = packElement;
+          }
+          break;
+        case packFileExtensionImage:
+          result[packFilePath] = PackImage(path: packFilePath);
+          break;
+        default:
+          result[packFilePath] = null;
+          logger.w('Unrecognized file: ${packFile.path}');
+          break;
       }
     }
 
-    return result;
+    return PackContent(
+      files: result,
+    );
   }
 
   Future<List<Pack>> fetchPacksAsync(

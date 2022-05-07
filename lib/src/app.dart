@@ -64,7 +64,7 @@ class AddonMergerApp extends StatelessWidget {
                   case PackElementLayout.routeName:
                     final args = routeSettings.arguments as List<String?>;
                     return PackElementLayout(
-                      element: packController.element(args[0]!),
+                      element: packController.packContent!.element(args[0]!),
                       path: args[0],
                       name: args[1],
                     );

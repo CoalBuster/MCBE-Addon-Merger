@@ -39,9 +39,11 @@ class PackDetailLayout extends StatelessWidget {
           return Column(
             children: [
               ManifestView(
-                manifest: pack.manifest,
+                pack: pack,
               ),
-              const Divider(),
+              const Divider(
+                height: 0,
+              ),
               Expanded(
                 child: PackView(
                   packController: packController,

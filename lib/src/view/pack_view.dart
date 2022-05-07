@@ -17,16 +17,16 @@ class PackView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = packController;
     final pack = packController.pack;
+    final content = packController.packContent;
 
-    if (controller.loading) {
+    if (packController.loading) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             const CircularProgressIndicator(),
-            Text(controller.statusMessage ?? ''),
+            Text(packController.statusMessage ?? ''),
           ],
         ),
       );
@@ -38,21 +38,27 @@ class PackView extends StatelessWidget {
       );
     }
 
+    if (content == null) {
+      return const Center(
+        child: Text('Pack content loading failed'),
+      );
+    }
+
     return ListView(
       restorationId: 'packContentsListView',
       children: [
-        if (controller.animationControllers.isEmpty)
+        if (content.animationControllers.isEmpty)
           const ListTile(
             title: Text('Animation Controllers'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (controller.animationControllers.isNotEmpty)
+        if (content.animationControllers.isNotEmpty)
           ExpansionTile(
             title: const Text('Animation Controllers'),
             subtitle: Text(
-                '${controller.animationControllers.entries.expand((e) => e.value.entries).length} controller(s)'),
-            children: controller.animationControllers.entries
+                '${content.animationControllers.entries.expand((e) => e.value.entries).length} controller(s)'),
+            children: content.animationControllers.entries
                 .expand((element) => element.value.entries.map((e) => ListTile(
                       title: Text(e.key),
                       subtitle: Text(element.key),
@@ -63,18 +69,18 @@ class PackView extends StatelessWidget {
                     )))
                 .toList(),
           ),
-        if (pack.isBehaviorPack && controller.entities.isEmpty)
+        if (pack.isBehaviorPack && content.entities.isEmpty)
           const ListTile(
             title: Text('Entities'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (pack.isBehaviorPack && controller.entities.isNotEmpty)
+        if (pack.isBehaviorPack && content.entities.isNotEmpty)
           ExpansionTile(
             title: const Text('Enitities'),
-            subtitle: Text(controller.entities.length
+            subtitle: Text(content.entities.length
                 .pluralText('entity', 'entities', '(server-side)')),
-            children: controller.entities.entries
+            children: content.entities.entries
                 .map((e) => ListTile(
                       title: Text(e.value.description.identifier),
                       subtitle: Text(e.key),
@@ -83,17 +89,17 @@ class PackView extends StatelessWidget {
                     ))
                 .toList(),
           ),
-        if (pack.isBehaviorPack && controller.items.isEmpty)
+        if (pack.isBehaviorPack && content.items.isEmpty)
           const ListTile(
             title: Text('Items'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (pack.isBehaviorPack && controller.items.isNotEmpty)
+        if (pack.isBehaviorPack && content.items.isNotEmpty)
           ExpansionTile(
             title: const Text('Items'),
-            subtitle: Text(controller.items.length.pluralText('item', 'items')),
-            children: controller.items.entries
+            subtitle: Text(content.items.length.pluralText('item', 'items')),
+            children: content.items.entries
                 .map((e) => ListTile(
                       title: Text(e.value.description.identifier),
                       subtitle: Text(e.key),
@@ -102,18 +108,18 @@ class PackView extends StatelessWidget {
                     ))
                 .toList(),
           ),
-        if (pack.isBehaviorPack && controller.lootTables.isEmpty)
+        if (pack.isBehaviorPack && content.lootTables.isEmpty)
           const ListTile(
             title: Text('Loot Tables'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (pack.isBehaviorPack && controller.lootTables.isNotEmpty)
+        if (pack.isBehaviorPack && content.lootTables.isNotEmpty)
           ExpansionTile(
             title: const Text('Loot Tables'),
             subtitle:
-                Text(controller.lootTables.length.pluralText('pool', 'pools')),
-            children: controller.lootTables.entries
+                Text(content.lootTables.length.pluralText('pool', 'pools')),
+            children: content.lootTables.entries
                 .map((e) => ListTile(
                       title: Text(e.key),
                       subtitle:
@@ -123,6 +129,18 @@ class PackView extends StatelessWidget {
                     ))
                 .toList(),
           ),
+        if (content.unidentified.isNotEmpty)
+          ExpansionTile(
+            title: const Text('Unidentified Files'),
+            subtitle:
+                Text(content.unidentified.length.pluralText('file', 'files')),
+            children: content.unidentified
+                .map((e) => ListTile(
+                      title: Text(e),
+                      dense: true,
+                    ))
+                .toList(),
+          )
       ],
     );
   }

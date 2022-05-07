@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger/src/model/pack_content.dart';
 
-import '../model/minecraft/animation_controller.dart';
-import '../model/minecraft/item.dart';
-import '../model/minecraft/loot_table.dart';
-import '../model/minecraft/server_entity.dart';
 import '../model/pack.dart';
-import '../model/pack_element.dart';
-import '../model/pack_element_type.dart';
 import '../repository/addon_repository.dart';
 
 class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
   final Logger logger;
 
-  Map<String, PackElement> _elements = {};
   String? _error;
   bool _loading = false;
   Pack? _pack;
+  PackContent? _packContent;
   String? _status;
 
   PackController({
@@ -25,46 +20,17 @@ class PackController with ChangeNotifier {
     required this.logger,
   });
 
-  Map<String, Map<String, MinecraftAnimationController>>
-      get animationControllers =>
-          Map.fromEntries(elements(PackElementType.animationController)
-              .entries
-              .map((e) => MapEntry(e.key, e.value.animationControllers!)));
-
-  Map<String, MinecraftServerEntity> get entities =>
-      Map.fromEntries(elements(PackElementType.entity)
-          .entries
-          .map((e) => MapEntry(e.key, e.value.entity!)));
-
-  Map<String, MinecraftItem> get items =>
-      Map.fromEntries(elements(PackElementType.item)
-          .entries
-          .map((e) => MapEntry(e.key, e.value.item!)));
-
-  Map<String, List<MinecraftLootTable>> get lootTables =>
-      Map.fromEntries(elements(PackElementType.lootTable)
-          .entries
-          .map((e) => MapEntry(e.key, e.value.lootTables!)));
-
   String? get errorMessage => _error;
   bool get loading => _loading;
   Pack? get pack => _pack;
+  PackContent? get packContent => _packContent;
   String? get statusMessage => _status;
   bool get succeeded => !_loading && _error == null;
 
   void clear() {
     _pack = null;
-    _elements.clear();
+    _packContent = null;
     notifyListeners();
-  }
-
-  PackElement? element(String path) {
-    return _elements[path];
-  }
-
-  Map<String, PackElement> elements(PackElementType type) {
-    return Map.fromEntries(
-        _elements.entries.where((element) => element.value.type == type));
   }
 
   Future<bool> loadAsync(Pack? pack) async {
@@ -80,7 +46,7 @@ class PackController with ChangeNotifier {
     _status = 'Loading pack..';
     notifyListeners();
 
-    _elements = await addonRepository.fetchPackElementsAsync(pack.directory);
+    _packContent = await addonRepository.fetchPackContentAsync(pack);
     _loading = false;
     notifyListeners();
     return true;
