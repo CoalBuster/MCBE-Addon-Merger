@@ -53,11 +53,7 @@ class AddonRepository {
 
       switch (packFileExtension) {
         case packFileExtensionElement:
-          final packElement = await _tryParsePackElementAsync(packFile);
-
-          if (packElement != null) {
-            result[packFilePath] = packElement;
-          }
+          result[packFilePath] = await _tryParsePackElementAsync(packFile);
           break;
         case packFileExtensionImage:
           result[packFilePath] = PackImage(path: packFilePath);
