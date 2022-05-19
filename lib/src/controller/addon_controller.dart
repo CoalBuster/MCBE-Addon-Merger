@@ -48,7 +48,7 @@ class AddonController with ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    _packs = await addonRepository.pick();
+    _packs = await addonRepository.pickPacksAsync();
     _loading = false;
     notifyListeners();
     return true;

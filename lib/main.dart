@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 
 import 'src/app.dart';
 import 'src/controller/addon_controller.dart';
+import 'src/controller/merge_controller.dart';
 import 'src/controller/pack_controller.dart';
 import 'src/repository/addon_repository.dart';
 import 'src/settings/settings_controller.dart';
@@ -24,6 +25,11 @@ void main() async {
     logger: logger,
   );
 
+  final mergeController = MergeController(
+    addonRepository: addonRepository,
+    logger: logger,
+  );
+
   final packController = PackController(
     addonRepository: addonRepository,
     logger: logger,
@@ -35,6 +41,7 @@ void main() async {
   runApp(AddonMergerApp(
     addonController: addonController,
     logger: logger,
+    mergeController: mergeController,
     packController: packController,
     settingsController: settingsController,
   ));

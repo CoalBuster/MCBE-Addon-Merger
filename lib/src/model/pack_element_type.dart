@@ -2,11 +2,9 @@ enum PackElementType {
   animationController,
   entity,
   item,
-  lootTable,
-}
+  lootTable;
 
-extension PackElementTypeString on PackElementType {
-  String? asString() {
+  String asString() {
     switch (this) {
       case PackElementType.animationController:
         return 'Animation Controller';
@@ -16,8 +14,19 @@ extension PackElementTypeString on PackElementType {
         return 'Item';
       case PackElementType.lootTable:
         return 'Loot Table';
-      default:
-        return null;
+    }
+  }
+
+  String jsonKey() {
+    switch (this) {
+      case PackElementType.animationController:
+        return 'animation_controllers';
+      case PackElementType.entity:
+        return 'minecraft:entity';
+      case PackElementType.item:
+        return 'minecraft:item';
+      case PackElementType.lootTable:
+        return 'pools';
     }
   }
 }

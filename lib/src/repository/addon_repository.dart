@@ -70,42 +70,57 @@ class AddonRepository {
     );
   }
 
+  Future<Pack?> fetchPackByPath(String packPath) async {
+    final packDirectory = Directory(packPath);
+
+    if (!await packDirectory.exists()) {
+      return null;
+    }
+
+    try {
+      final packFiles = await packDirectory.list().toList();
+      final manifest = await _tryParseManifestAsync(packFiles
+          .whereType<File>()
+          .firstWhere((f) => path.basename(f.path) == manifestFileName));
+
+      if (manifest == null) {
+        return null;
+      }
+
+      final pack = Pack(
+        directory: packDirectory,
+        manifest: manifest,
+      );
+
+      return pack;
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<List<Pack>> fetchPacksAsync(
     Directory searchDirectory, [
     int maxDepth = 1,
   ]) async {
     final List<Pack> result = [];
     final entries = await searchDirectory.list().toList();
-    final candidates = entries
-        .whereType<File>()
-        .where((f) => path.basename(f.path) == manifestFileName)
-        .toList();
 
-    if (candidates.isEmpty && maxDepth > 0) {
-      logger.d('Manifest not found, checking sub-directories..');
-
+    if (maxDepth > 0) {
       for (var dir in entries.whereType<Directory>()) {
         result.addAll(await fetchPacksAsync(dir, maxDepth - 1));
       }
     }
 
-    for (var manifestFile in candidates) {
-      final manifest = await _tryParseManifestAsync(manifestFile);
+    final pack = await fetchPackByPath(searchDirectory.path);
 
-      if (manifest != null) {
-        logger.i('Manifest found at ${manifestFile.path}');
-        final pack = Pack(
-          directory: searchDirectory,
-          manifest: manifest,
-        );
-        result.add(pack);
-      }
+    if (pack != null) {
+      result.add(pack);
     }
 
     return result;
   }
 
-  Future<List<Pack>> pick() async {
+  Future<List<Pack>> pickPacksAsync() async {
     logger.i('Picking addon..');
     final result = await FilePicker.platform.getDirectoryPath(
       dialogTitle: 'Select Addon',
@@ -124,7 +139,7 @@ class AddonRepository {
       return [];
     }
 
-    final manifests = await fetchPacksAsync(dir);
+    final manifests = await fetchPacksAsync(dir, 2);
     return manifests;
   }
 

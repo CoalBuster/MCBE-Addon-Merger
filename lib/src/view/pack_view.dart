@@ -4,7 +4,7 @@ import '../controller/pack_controller.dart';
 import '../model/pack_element_type.dart';
 import '../util/pluralizer.dart';
 
-class PackView extends StatelessWidget {
+class PackView extends AnimatedWidget {
   final Function(PackElementType type, String path, [String? name])?
       onElementSelected;
   final PackController packController;
@@ -13,7 +13,7 @@ class PackView extends StatelessWidget {
     required this.packController,
     Key? key,
     this.onElementSelected,
-  }) : super(key: key);
+  }) : super(listenable: packController, key: key);
 
   @override
   Widget build(BuildContext context) {
