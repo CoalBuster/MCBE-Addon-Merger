@@ -29,7 +29,10 @@ class MergeController with ChangeNotifier {
   })  : _basePackController =
             PackController(addonRepository: addonRepository, logger: logger),
         _comparePackController =
-            PackController(addonRepository: addonRepository, logger: logger);
+            PackController(addonRepository: addonRepository, logger: logger) {
+    _basePackController.addListener(notifyListeners);
+    _comparePackController.addListener(notifyListeners);
+  }
 
   Pack? get basePack => _basePackController.pack;
   Pack? get comparePack => _comparePackController.pack;
@@ -38,6 +41,8 @@ class MergeController with ChangeNotifier {
   bool get _canCompare =>
       _basePackController.packContent != null &&
       _comparePackController.packContent != null;
+
+  bool get packsLoaded => _canCompare;
 
   List<PackDifference>? compare() {
     _diff.clear();

@@ -6,7 +6,7 @@ import '../model/version.dart';
 class AnimationControllerDetailView extends StatelessWidget {
   final Map<String, MinecraftAnimationController> animationControllers;
   final Version? formatVersion;
-  final String name;
+  final String? name;
 
   const AnimationControllerDetailView({
     required this.animationControllers,
@@ -27,7 +27,7 @@ class AnimationControllerDetailView extends StatelessWidget {
       restorationId: 'animationControllerListView',
       children: [
         ListTile(
-          title: Text(name),
+          title: Text(name!),
           subtitle: formatVersion == null
               ? null
               : Text('Format Version: $formatVersion'),
