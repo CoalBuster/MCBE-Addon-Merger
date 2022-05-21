@@ -23,6 +23,7 @@ class Manifest {
 
   bool get isBehaviorPack => modules.any((m) => m.type == ModuleType.data);
   bool get isResourcePack => modules.any((m) => m.type == ModuleType.resources);
+  Iterable<ModuleType> get moduleTypes => modules.map((m) => m.type);
 
   factory Manifest.fromJson(Map<String, dynamic> json) =>
       _$ManifestFromJson(json);

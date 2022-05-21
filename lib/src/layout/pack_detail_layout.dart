@@ -4,7 +4,7 @@ import 'package:logger/logger.dart';
 import '../controller/pack_controller.dart';
 import '../model/pack_element_type.dart';
 import '../view/manifest_view.dart';
-import '../view/pack_view.dart';
+import '../sliver/pack_content_sliver.dart';
 import 'pack_element_layout.dart';
 
 class PackDetailLayout extends StatelessWidget {
@@ -36,20 +36,27 @@ class PackDetailLayout extends StatelessWidget {
             );
           }
 
-          return Column(
-            children: [
-              ManifestView(
-                pack: pack,
-              ),
-              const Divider(
-                height: 0,
-              ),
-              Expanded(
-                child: PackView(
-                  packController: packController,
-                  onElementSelected: (type, path, [name]) =>
-                      _onElementSelected(context, type, path, name),
+          if (packController.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: ManifestView(
+                  pack: pack,
                 ),
+              ),
+              const SliverToBoxAdapter(
+                child: Divider(height: 1),
+              ),
+              PackContentSliver(
+                content: packController.packContent!,
+                moduleTypes: pack.manifest.moduleTypes,
+                onElementSelected: (type, path, [name]) =>
+                    _onElementSelected(context, type, path, name),
               ),
             ],
           );
@@ -60,10 +67,7 @@ class PackDetailLayout extends StatelessWidget {
 
   void _onElementSelected(
       BuildContext context, PackElementType type, String path, String? name) {
-    Navigator.restorablePushNamed(
-      context,
-      PackElementLayout.routeName,
-      arguments: [path, name],
-    );
+    packController.selectElement(path, name);
+    Navigator.restorablePushNamed(context, PackElementLayout.routeName);
   }
 }

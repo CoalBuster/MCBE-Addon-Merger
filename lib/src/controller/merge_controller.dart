@@ -7,6 +7,7 @@ import 'package:json_patch/json_patch.dart';
 import 'package:logger/logger.dart';
 
 import '../model/pack.dart';
+import '../model/pack_content.dart';
 import '../model/pack_difference.dart';
 import '../model/pack_element.dart';
 import '../model/pack_element_type.dart';
@@ -26,29 +27,39 @@ class MergeController with ChangeNotifier {
   MergeController({
     required this.addonRepository,
     required this.logger,
-  })  : _basePackController =
-            PackController(addonRepository: addonRepository, logger: logger),
-        _comparePackController =
-            PackController(addonRepository: addonRepository, logger: logger) {
+  })  : _basePackController = PackController(
+          addonRepository: addonRepository,
+        ),
+        _comparePackController = PackController(
+          addonRepository: addonRepository,
+        ) {
     _basePackController.addListener(notifyListeners);
     _comparePackController.addListener(notifyListeners);
   }
 
   Pack? get basePack => _basePackController.pack;
+  PackContent? get basePackContent => _basePackController.packContent;
   Pack? get comparePack => _comparePackController.pack;
+  PackContent? get comparePackContent => _comparePackController.packContent;
   List<PackDifference> get diff => UnmodifiableListView(_diff);
-
-  bool get _canCompare =>
+  bool get packsLoading =>
+      _basePackController.loading || _comparePackController.loading;
+  bool get packsSelected =>
       _basePackController.packContent != null &&
       _comparePackController.packContent != null;
 
-  bool get packsLoaded => _canCompare;
+  void clear() {
+    _basePackController.clear();
+    _comparePackController.clear();
+    _diff.clear();
+    notifyListeners();
+  }
 
   List<PackDifference>? compare() {
     _diff.clear();
     notifyListeners();
 
-    if (!_canCompare) {
+    if (!packsSelected) {
       return null;
     }
 
@@ -138,10 +149,16 @@ class MergeController with ChangeNotifier {
     );
   }
 
+  Future<bool> loadBasePack(Pack? basePack) =>
+      _basePackController.loadAsync(basePack);
+
   Future<bool> loadBasePackByPathAsync(String basePackPath) async {
     final basePack = await addonRepository.fetchPackByPath(basePackPath);
     return _basePackController.loadAsync(basePack);
   }
+
+  Future<bool> loadComparePack(Pack? comparePack) =>
+      _comparePackController.loadAsync(comparePack);
 
   Future<bool> loadComparePackByPathAsync(String comparePackPath) async {
     final comparePack = await addonRepository.fetchPackByPath(comparePackPath);

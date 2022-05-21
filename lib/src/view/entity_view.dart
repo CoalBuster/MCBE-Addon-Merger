@@ -10,14 +10,14 @@ import 'tile/patched_tile.dart';
 class EntityDetailView extends StatelessWidget {
   final MinecraftServerEntity entity;
   final Version? formatVersion;
-  final List<Patch> patches;
+  final List<Patch>? patches;
   final ScrollController scrollController;
 
   EntityDetailView({
     required this.entity,
     this.formatVersion,
     Key? key,
-    this.patches = const [],
+    this.patches,
     ScrollController? scrollController,
   })  : scrollController = scrollController ?? ScrollController(),
         super(key: key);
@@ -77,9 +77,9 @@ Animate: ${entity.description.scripts?.animate?.join(', ')}
     }
   }
 
-  List<Patch> _diff(String path) {
+  List<Patch>? _diff(String path) {
     return patches
-        .where((p) => p.path.startsWith(path))
+        ?.where((p) => p.path.startsWith(path))
         .map((p) => Patch(
               operation: p.operation,
               path: p.path.replaceFirst(path, ''),

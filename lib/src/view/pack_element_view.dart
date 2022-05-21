@@ -42,7 +42,7 @@ class PackElementDetailView extends StatelessWidget {
         return EntityDetailView(
           entity: element!.entity!,
           formatVersion: element!.formatVersion,
-          patches: patches ?? [],
+          patches: patches,
         );
       case PackElementType.item:
         return ItemDetailView(
