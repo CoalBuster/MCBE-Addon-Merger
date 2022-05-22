@@ -2,29 +2,45 @@ import 'package:flutter/material.dart';
 
 import '../model/minecraft/component/interact.dart';
 import '../model/minecraft/server_entity.dart';
+import '../model/patch.dart';
 import '../model/version.dart';
 import 'tile/interact_tile.dart';
+import 'tile/patched_tile.dart';
 
 class EntityDetailView extends StatelessWidget {
   final MinecraftServerEntity entity;
   final Version? formatVersion;
+  final List<Patch>? patches;
+  final ScrollController scrollController;
 
-  const EntityDetailView({
+  EntityDetailView({
     required this.entity,
     this.formatVersion,
     Key? key,
-  }) : super(key: key);
+    this.patches,
+    ScrollController? scrollController,
+  })  : scrollController = scrollController ?? ScrollController(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       restorationId: 'entityListView',
+      controller: scrollController,
       children: [
-        ListTile(
-          title: Text(entity.description.identifier),
+        PatchedTile(
+          title: entity.description.identifier,
           subtitle: formatVersion == null
               ? null
-              : Text('Format Version: $formatVersion'),
+              : Row(
+                  children: [
+                    const Text('Format Version: '),
+                    PatchedText(
+                      original: formatVersion.toString(),
+                      patches: _diff('/format_version'),
+                    ),
+                  ],
+                ),
         ),
         ListTile(
           title: const Text('Description'),
@@ -53,10 +69,22 @@ Animate: ${entity.description.scripts?.animate?.join(', ')}
         final interact = MinecraftComponentInteract.fromJson(componentContent);
         return InteractTile(interact: interact);
       default:
-        return ListTile(
-          title: Text(componentName),
-          subtitle: Text(componentContent.toString()),
+        return PatchedTile(
+          title: componentName,
+          value: componentContent,
+          patches: _diff('/minecraft:entity/components/$componentName'),
         );
     }
+  }
+
+  List<Patch>? _diff(String path) {
+    return patches
+        ?.where((p) => p.path.startsWith(path))
+        .map((p) => Patch(
+              operation: p.operation,
+              path: p.path.replaceFirst(path, ''),
+              value: p.value,
+            ))
+        .toList();
   }
 }

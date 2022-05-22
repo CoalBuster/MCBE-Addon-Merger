@@ -8,11 +8,13 @@ import '../model/pack.dart';
 class PackListView extends StatelessWidget {
   final Function(Pack pack)? onPackTapped;
   final List<Pack> packs;
+  final List<Pack> selected;
 
   const PackListView({
     Key? key,
     this.onPackTapped,
     this.packs = const [],
+    this.selected = const [],
   }) : super(key: key);
 
   @override
@@ -30,6 +32,7 @@ class PackListView extends StatelessWidget {
               File(path.absolute(pack.directory.path, 'pack_icon.png')),
             ),
           ),
+          selected: selected.contains(pack),
           subtitle: Text('v${pack.manifest.header.version} | ' +
               (pack.isBehaviorPack
                   ? 'Behavior Pack'

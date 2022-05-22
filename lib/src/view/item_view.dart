@@ -4,7 +4,7 @@ import '../model/minecraft/component/food.dart';
 import '../model/minecraft/component/seed.dart';
 import '../model/minecraft/item.dart';
 import '../model/version.dart';
-import 'tile/simple_tile.dart';
+import 'tile/patched_tile.dart';
 
 class ItemDetailView extends StatelessWidget {
   final MinecraftItem item;
@@ -53,20 +53,20 @@ class ItemDetailView extends StatelessWidget {
     switch (componentName) {
       case 'minecraft:food':
         final food = MinecraftComponentFood.fromJson(componentContent);
-        return SimpleTile(
+        return PatchedTile(
           title: 'Food',
-          subtitle: food.toString(),
+          subtitle: Text(food.toString()),
         );
       case 'minecraft:seed':
         final seed = MinecraftComponentSeed.fromJson(componentContent);
-        return SimpleTile(
+        return PatchedTile(
           title: 'Seed',
-          subtitle: seed.toString(),
+          subtitle: Text(seed.toString()),
         );
       case 'minecraft:use_duration':
-        return SimpleTile(
+        return PatchedTile(
           title: 'Use Duration',
-          subtitle: '$componentContent tick(s)',
+          subtitle: Text('$componentContent tick(s)'),
         );
       default:
         return ListTile(
