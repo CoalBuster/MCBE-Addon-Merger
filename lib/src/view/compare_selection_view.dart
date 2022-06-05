@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/merge_controller.dart';
 import '../layout/pack_picker_layout.dart';
-import '../model/pack.dart';
 
 class CompareSelectionView extends AnimatedWidget {
   final MergeController mergeController;

@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import '../effect.dart';
-
 part 'seed.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)

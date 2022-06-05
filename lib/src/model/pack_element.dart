@@ -1,11 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import 'minecraft/animation_controller.dart';
 import 'minecraft/item.dart';
 import 'minecraft/loot_table.dart';
 import 'minecraft/server_entity.dart';
-import 'pack_element_type.dart';
-import 'version.dart';
 
 part 'pack_element.g.dart';
 

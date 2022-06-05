@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/pack_picker_controller.dart';
-import '../model/pack.dart';
 import '../view/pack_list_view.dart';
 
 class PackPickerLayout extends AnimatedWidget {

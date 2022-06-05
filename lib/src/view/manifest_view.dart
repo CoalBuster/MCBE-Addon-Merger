@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
-
-import '../model/pack.dart';
 
 class ManifestView extends StatelessWidget {
   final Pack pack;

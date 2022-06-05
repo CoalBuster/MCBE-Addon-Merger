@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
-import '../model/minecraft/component/interact.dart';
-import '../model/minecraft/server_entity.dart';
 import '../model/patch.dart';
-import '../model/version.dart';
 import 'tile/interact_tile.dart';
 import 'tile/patched_tile.dart';
 
 class EntityDetailView extends StatelessWidget {
-  final MinecraftServerEntity entity;
+  final ServerEntity entity;
   final Version? formatVersion;
   final List<Patch>? patches;
   final ScrollController scrollController;
@@ -66,7 +64,7 @@ Animate: ${entity.description.scripts?.animate?.join(', ')}
   Widget _buildComponent(String componentName, dynamic componentContent) {
     switch (componentName) {
       case 'minecraft:interact':
-        final interact = MinecraftComponentInteract.fromJson(componentContent);
+        final interact = EntityComponentInteract.fromJson(componentContent);
         return InteractTile(interact: interact);
       default:
         return PatchedTile(

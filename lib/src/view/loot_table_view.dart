@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
 
-import '../model/minecraft/loot_table.dart';
-import '../model/version.dart';
-
 class LootTableDetailView extends StatelessWidget {
-  final List<MinecraftLootTable> pools;
+  final List<LootTable> pools;
   final Version? formatVersion;
 
   const LootTableDetailView({
@@ -60,8 +58,8 @@ class LootTableDetailView extends StatelessWidget {
 }
 
 class LootTablePoolEntryView extends StatelessWidget {
-  final MinecraftLootPoolEntry entry;
-  final MinecraftLootTable parentPool;
+  final LootPoolEntry entry;
+  final LootTable parentPool;
 
   const LootTablePoolEntryView({
     required this.entry,
@@ -77,17 +75,17 @@ class LootTablePoolEntryView extends StatelessWidget {
         : ' (${(entry.weight / parentPool.totalWeight * 100).toStringAsFixed(2)}%)';
 
     switch (entry.type) {
-      case MinecraftLootType.empty:
+      case LootType.empty:
         return ListTile(
           title: Text('Nothing$chance'),
         );
-      case MinecraftLootType.item:
+      case LootType.item:
         final functions = entry.functions?.map((e) => e.toString()).join(' | ');
         return ListTile(
           title: Text('${entry.name}$chance'),
           subtitle: functions == null ? null : Text(functions),
         );
-      case MinecraftLootType.lootTable:
+      case LootType.lootTable:
         final table = path.basenameWithoutExtension(entry.name!);
         return ListTile(
           leading: parentPool.isTiered

@@ -4,13 +4,8 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger/src/model/pack_content.dart';
-import 'package:mcbe_addon_merger/src/model/pack_image.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
-
-import '../model/manifest.dart';
-import '../model/pack.dart';
-import '../model/pack_element.dart';
 
 class AddonRepository {
   static const ignoredDirectories = [

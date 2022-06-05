@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/merge_controller.dart';
 import '../controller/pack_controller.dart';
-import '../model/pack.dart';
 import 'compare_selection_layout.dart';
 import 'pack_detail_layout.dart';
 import 'pack_picker_layout.dart';

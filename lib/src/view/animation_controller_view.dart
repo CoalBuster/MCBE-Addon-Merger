@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../model/minecraft/animation_controller.dart';
-import '../model/version.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart' as mc;
 
 class AnimationControllerDetailView extends StatelessWidget {
-  final Map<String, MinecraftAnimationController> animationControllers;
-  final Version? formatVersion;
+  final Map<String, mc.AnimationController> animationControllers;
+  final mc.Version? formatVersion;
   final String? name;
 
   const AnimationControllerDetailView({

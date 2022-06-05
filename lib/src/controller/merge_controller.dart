@@ -5,13 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:json_patch/json_patch.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
-import '../model/pack.dart';
-import '../model/pack_content.dart';
 import '../model/pack_difference.dart';
-import '../model/pack_element.dart';
-import '../model/pack_element_type.dart';
-import '../model/pack_image.dart';
 import '../model/patch.dart';
 import '../repository/addon_repository.dart';
 import 'pack_controller.dart';

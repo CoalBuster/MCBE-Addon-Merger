@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../model/minecraft/component/interact.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 class InteractTile extends StatelessWidget {
   const InteractTile({
@@ -8,7 +7,7 @@ class InteractTile extends StatelessWidget {
     required this.interact,
   }) : super(key: key);
 
-  final MinecraftComponentInteract interact;
+  final EntityComponentInteract interact;
 
   @override
   Widget build(BuildContext context) {

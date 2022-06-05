@@ -2,8 +2,8 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
-import '../model/pack.dart';
 import '../repository/addon_repository.dart';
 
 class PackPickerController with ChangeNotifier {

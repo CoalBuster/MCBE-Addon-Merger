@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
-import '../model/minecraft/component/food.dart';
-import '../model/minecraft/component/seed.dart';
-import '../model/minecraft/item.dart';
-import '../model/version.dart';
 import 'tile/patched_tile.dart';
 
 class ItemDetailView extends StatelessWidget {
-  final MinecraftItem item;
+  final Item item;
   final Version? formatVersion;
 
   const ItemDetailView({
@@ -52,13 +49,13 @@ class ItemDetailView extends StatelessWidget {
   Widget _buildComponent(String componentName, dynamic componentContent) {
     switch (componentName) {
       case 'minecraft:food':
-        final food = MinecraftComponentFood.fromJson(componentContent);
+        final food = ItemComponentFood.fromJson(componentContent);
         return PatchedTile(
           title: 'Food',
           subtitle: Text(food.toString()),
         );
       case 'minecraft:seed':
-        final seed = MinecraftComponentSeed.fromJson(componentContent);
+        final seed = ItemComponentSeed.fromJson(componentContent);
         return PatchedTile(
           title: 'Seed',
           subtitle: Text(seed.toString()),
