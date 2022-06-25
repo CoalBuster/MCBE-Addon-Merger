@@ -5,9 +5,9 @@ import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
 
 class PackListView extends StatelessWidget {
-  final Function(Pack pack)? onPackTapped;
-  final List<Pack> packs;
-  final List<Pack> selected;
+  final Function(Manifest pack)? onPackTapped;
+  final List<Manifest> packs;
+  final List<Manifest> selected;
 
   const PackListView({
     Key? key,
@@ -25,14 +25,15 @@ class PackListView extends StatelessWidget {
         final pack = packs[index];
 
         return ListTile(
-          title: Text(pack.manifest.header.name),
+          title: Text(pack.header.name),
           leading: CircleAvatar(
-            backgroundImage: FileImage(
-              File(path.absolute(pack.directory.path, 'pack_icon.png')),
-            ),
-          ),
+              // backgroundImage: MemoryImage(),
+              // backgroundImage: FileImage(
+              //   File(path.absolute(pack.directory.path, 'pack_icon.png')),
+              // ),
+              ),
           selected: selected.contains(pack),
-          subtitle: Text('v${pack.manifest.header.version} | ' +
+          subtitle: Text('v${pack.header.version} | ' +
               (pack.isBehaviorPack
                   ? 'Behavior Pack'
                   : pack.isResourcePack

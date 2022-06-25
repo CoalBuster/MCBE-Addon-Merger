@@ -1,11 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:file_picker/file_picker.dart';
+import 'package:archive/archive.dart';
 import 'package:logger/logger.dart';
 import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as paths;
 
 class AddonRepository {
   static const ignoredDirectories = [
@@ -23,28 +21,86 @@ class AddonRepository {
 
   final Logger logger;
 
+  Archive? _archive;
+  bool? _isAddon;
+  final Map<String, String> _manifests = {};
+
   AddonRepository({
     required this.logger,
   });
 
-  Future<PackContent> fetchPackContentAsync(Pack pack) async {
+  Future<List<int>> download() {
+    throw UnimplementedError();
+  }
+
+  Future<List<Manifest>> listPacksAsync() async {
+    final archive = _archive;
+
+    if (archive == null) {
+      logger.w('No addon loaded');
+      return [];
+    }
+
+    if (_isAddon!) {
+      var manifestFiles = archive
+          .where((e) => paths.split(e.name).length == 2)
+          .where((e) => e.name.endsWith(manifestFileName));
+
+      if (manifestFiles.isEmpty) {
+        logger.w('Manifest(s) not found for Addon');
+        return [];
+      }
+
+      List<Manifest> manifests = [];
+
+      for (var f in manifestFiles) {
+        var m = _readManifestAsync(f);
+
+        if (m == null) {
+          continue;
+        }
+
+        _manifests[m.header.uuid] = paths.dirname(f.name);
+        manifests.add(m);
+      }
+
+      return manifests;
+    } else {
+      var manifestFile = archive.findFile(manifestFileName);
+
+      if (manifestFile == null) {
+        logger.w('Manifest not found for Pack');
+        return [];
+      }
+
+      var manifest = _readManifestAsync(manifestFile);
+
+      if (manifest == null) {
+        return [];
+      }
+
+      _manifests[manifest.header.uuid] = '.';
+      return [manifest];
+    }
+  }
+
+  Future<PackContent> listElementsByPackId(String packId) async {
+    final packPath = _manifests[packId]!;
     final Map<String, dynamic> result = {};
-    final packFiles = await pack.directory
-        .list(recursive: true)
-        .where((e) => e is File)
-        .cast<File>()
+    final packFiles = _archive!
+        .where((e) => e.isFile)
+        .where((e) => paths.isWithin(packPath, e.name))
         .where(
-            (f) => !ignoredFiles.contains(path.basename(f.path).toLowerCase()))
-        .where((f) => !path
-            .split(path.dirname(f.path))
+            (e) => !ignoredFiles.contains(paths.basename(e.name).toLowerCase()))
+        .where((e) => !paths
+            .split(paths.dirname(e.name))
             .any((part) => ignoredDirectories.contains(part.toLowerCase())))
-        .where((f) => path.basename(f.path) != manifestFileName)
+        .where((e) => paths.basename(e.name) != manifestFileName)
         .toList();
 
     for (var packFile in packFiles) {
-      final packFilePath =
-          path.relative(packFile.path, from: pack.directory.path);
-      final packFileExtension = path.extension(packFile.path);
+      final packFilePath = paths.relative(packFile.name, from: packPath);
+      final packFileExtension = paths.extension(packFile.name);
 
       switch (packFileExtension) {
         case packFileExtensionElement:
@@ -55,7 +111,7 @@ class AddonRepository {
           break;
         default:
           result[packFilePath] = null;
-          logger.w('Unrecognized file: ${packFile.path}');
+          logger.w('Unrecognized file: ${packFile.name}');
           break;
       }
     }
@@ -65,83 +121,111 @@ class AddonRepository {
     );
   }
 
-  Future<Pack?> fetchPackByPath(String packPath) async {
-    final packDirectory = Directory(packPath);
+  Future<bool> uploadAddon(List<int> data) {
+    _manifests.clear();
+    _archive = ZipDecoder().decodeBytes(data);
+    _isAddon = true;
+    return Future.value(true);
+  }
 
-    if (!await packDirectory.exists()) {
-      return null;
-    }
+  Future<bool> uploadPack(List<int> data) {
+    _archive = ZipDecoder().decodeBytes(data);
+    _isAddon = false;
+    return Future.value(true);
+  }
 
+  Manifest? _readManifestAsync(ArchiveFile file) {
     try {
-      final packFiles = await packDirectory.list().toList();
-      final manifest = await _tryParseManifestAsync(packFiles
-          .whereType<File>()
-          .firstWhere((f) => path.basename(f.path) == manifestFileName));
+      final contents = file.content as List<int>;
+      final utf = utf8.decode(contents);
+      final json = jsonDecode(utf);
+      final manifest = Manifest.fromJson(json);
 
-      if (manifest == null) {
-        return null;
-      }
-
-      final pack = Pack(
-        directory: packDirectory,
-        manifest: manifest,
-      );
-
-      return pack;
+      logger.i('Successfully parsed Manifest (uuid=${manifest.header.uuid})');
+      return manifest;
     } catch (e) {
       return null;
     }
   }
 
-  Future<List<Pack>> fetchPacksAsync(
-    Directory searchDirectory, [
-    int maxDepth = 1,
-  ]) async {
-    final List<Pack> result = [];
-    final entries = await searchDirectory.list().toList();
+  // Future<Pack?> fetchPackByPath(String packPath) async {
+  //   final packDirectory = Directory(packPath);
 
-    if (maxDepth > 0) {
-      for (var dir in entries.whereType<Directory>()) {
-        result.addAll(await fetchPacksAsync(dir, maxDepth - 1));
-      }
-    }
+  //   if (!await packDirectory.exists()) {
+  //     return null;
+  //   }
 
-    final pack = await fetchPackByPath(searchDirectory.path);
+  //   try {
+  //     final packFiles = await packDirectory.list().toList();
+  //     final manifest = await _tryParseManifestAsync(packFiles
+  //         .whereType<File>()
+  //         .firstWhere((f) => path.basename(f.path) == manifestFileName));
 
-    if (pack != null) {
-      result.add(pack);
-    }
+  //     if (manifest == null) {
+  //       return null;
+  //     }
 
-    return result;
-  }
+  //     final pack = Pack(
+  //       directory: packDirectory,
+  //       manifest: manifest,
+  //     );
 
-  Future<List<Pack>> pickPacksAsync() async {
-    logger.i('Picking addon..');
-    final result = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: 'Select Addon',
-    );
+  //     return pack;
+  //   } catch (e) {
+  //     return null;
+  //   }
+  // }
 
-    if (result == null) {
-      logger.w('Nothing picked');
-      return [];
-    }
+  // Future<List<Pack>> fetchPacksAsync(
+  //   Directory searchDirectory, [
+  //   int maxDepth = 1,
+  // ]) async {
+  //   final List<Pack> result = [];
+  //   final entries = await searchDirectory.list().toList();
 
-    logger.i('Picked directory: $result');
-    final dir = Directory(result);
+  //   if (maxDepth > 0) {
+  //     for (var dir in entries.whereType<Directory>()) {
+  //       result.addAll(await fetchPacksAsync(dir, maxDepth - 1));
+  //     }
+  //   }
 
-    if (!await dir.exists()) {
-      logger.w('Directory does not exist');
-      return [];
-    }
+  //   final pack = await fetchPackByPath(searchDirectory.path);
 
-    final manifests = await fetchPacksAsync(dir, 2);
-    return manifests;
-  }
+  //   if (pack != null) {
+  //     result.add(pack);
+  //   }
 
-  Future<PackElement?> _tryParsePackElementAsync(File file) async {
+  //   return result;
+  // }
+
+  // Future<List<Pack>> pickPacksAsync() async {
+  //   logger.i('Picking addon..');
+  //   final result = await FilePicker.platform.getDirectoryPath(
+  //     dialogTitle: 'Select Addon',
+  //   );
+
+  //   if (result == null) {
+  //     logger.w('Nothing picked');
+  //     return [];
+  //   }
+
+  //   logger.i('Picked directory: $result');
+  //   final dir = Directory(result);
+
+  //   if (!await dir.exists()) {
+  //     logger.w('Directory does not exist');
+  //     return [];
+  //   }
+
+  //   final manifests = await fetchPacksAsync(dir, 2);
+  //   return manifests;
+  // }
+
+  Future<PackElement?> _tryParsePackElementAsync(ArchiveFile file) async {
     try {
-      final contents = await file.readAsString();
-      final json = jsonDecode(contents);
+      final contents = file.content as List<int>;
+      final utf = utf8.decode(contents);
+      final json = jsonDecode(utf);
       final element = PackElement.fromJson(json);
 
       if (element.type == null) {
@@ -151,23 +235,10 @@ class AddonRepository {
       // logger.i('[${element.type?.asString()}] ${path.basename(file.path)}');
       return element;
     } on FormatException catch (e) {
-      logger.w('Could not parse ${path.basename(file.path)}: ${e.message}');
+      logger.w('Could not parse ${paths.basename(file.name)}: ${e.message}');
       return null;
     } catch (e) {
-      logger.w('Could not parse ${path.basename(file.path)}: $e');
-      return null;
-    }
-  }
-
-  Future<Manifest?> _tryParseManifestAsync(File file) async {
-    try {
-      final contents = await file.readAsString();
-      final json = jsonDecode(contents);
-      final manifest = Manifest.fromJson(json);
-
-      logger.i('Successfully parsed Manifest (uuid=${manifest.header.name})');
-      return manifest;
-    } catch (e) {
+      logger.w('Could not parse ${paths.basename(file.name)}: $e');
       return null;
     }
   }

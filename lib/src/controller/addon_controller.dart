@@ -2,31 +2,41 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger/src/repository/addon_picker.dart';
 import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../repository/addon_repository.dart';
 
-class PackPickerController with ChangeNotifier {
+class AddonController with ChangeNotifier {
+  final AddonPicker addonPicker;
   final AddonRepository addonRepository;
   final Logger logger;
 
   bool _loading = false;
-  List<Pack> _packs = [];
+  List<Manifest> _packs = [];
 
-  PackPickerController({
+  AddonController({
+    required this.addonPicker,
     required this.addonRepository,
     required this.logger,
   });
 
   bool get loading => _loading;
-  List<Pack> get packs => UnmodifiableListView(_packs);
+  List<Manifest> get packs => UnmodifiableListView(_packs);
 
-  Future<bool> loadAsync() async {
+  Future<bool> loadAddonAsync(List<int>? data) async {
     _packs.clear();
     _loading = true;
     notifyListeners();
 
-    _packs = await addonRepository.pickPacksAsync();
+    if (data == null) {
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+
+    await addonRepository.uploadAddon(data);
+    _packs = await addonRepository.listPacksAsync();
     _loading = false;
     notifyListeners();
     return true;

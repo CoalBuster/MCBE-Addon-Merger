@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger/src/controller/addon_controller.dart';
+import 'package:mcbe_addon_merger/src/repository/addon_picker.dart';
+import 'package:mcbe_addon_merger/src/repository/addon_repository.dart';
 import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/merge_controller.dart';
 import '../controller/pack_controller.dart';
 import 'compare_selection_layout.dart';
 import 'pack_detail_layout.dart';
-import 'pack_picker_layout.dart';
+import 'addon_layout.dart';
 
 /// Displays detailed information about a SampleItem.
 class MergerLayout extends StatelessWidget {
   static const routeName = '/';
 
+  final AddonController addonController;
+  final AddonPicker addonPicker;
   final Logger logger;
   final MergeController mergeController;
   final PackController packController;
 
   const MergerLayout({
+    required this.addonController,
+    required this.addonPicker,
     required this.logger,
     required this.mergeController,
     required this.packController,
@@ -43,7 +50,7 @@ class MergerLayout extends StatelessWidget {
               const SizedBox(height: 8),
               ElevatedButton(
                 child: const Text('Compare Packs'),
-                onPressed: () => _compare(context),
+                onPressed: null, //() => _compare(context),
               ),
             ],
           ),
@@ -58,12 +65,28 @@ class MergerLayout extends StatelessWidget {
   }
 
   _explore(BuildContext context) async {
-    final _pack =
-        await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
+    var pickResult = await addonPicker.pickFileAsync();
 
-    if (_pack != null) {
-      packController.loadAsync(_pack);
+    if (pickResult == null) {
+      return;
+    }
+
+    if (pickResult.isAddon) {
+      await addonController.loadAddonAsync(pickResult.data);
+      Navigator.restorablePushNamed(context, AddonLayout.routeName);
+    } else {
+      await packController.loadPackAsync(pickResult.data);
       Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
     }
+
+    // final _pack =
+    //     await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
+
+    // final packs = await addonPicker.pickAddonAsync();
+
+    // if (_pack != null) {
+    //   packController.loadAsync(_pack);
+    //   Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
+    // }
   }
 }

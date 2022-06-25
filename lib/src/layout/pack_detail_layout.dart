@@ -46,7 +46,7 @@ class PackDetailLayout extends StatelessWidget {
             slivers: [
               SliverToBoxAdapter(
                 child: ManifestView(
-                  pack: pack,
+                  manifest: pack,
                 ),
               ),
               const SliverToBoxAdapter(
@@ -54,7 +54,7 @@ class PackDetailLayout extends StatelessWidget {
               ),
               PackContentSliver(
                 content: packController.packContent!,
-                moduleTypes: pack.manifest.moduleTypes,
+                moduleTypes: pack.moduleTypes,
                 onElementSelected: (type, path, [name]) =>
                     _onElementSelected(context, type, path, name),
               ),

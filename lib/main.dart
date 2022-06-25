@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mcbe_addon_merger/src/repository/addon_picker.dart';
 
 import 'src/app.dart';
-import 'src/controller/pack_picker_controller.dart';
+import 'src/controller/addon_controller.dart';
 import 'src/controller/merge_controller.dart';
 import 'src/controller/pack_controller.dart';
 import 'src/repository/addon_repository.dart';
@@ -14,6 +15,10 @@ void main() async {
     filter: ProductionFilter(),
     printer: SimplePrinter(printTime: true),
     level: Level.verbose,
+  );
+
+  final addonPicker = AddonPicker(
+    logger: logger,
   );
 
   final addonRepository = AddonRepository(
@@ -29,7 +34,8 @@ void main() async {
     addonRepository: addonRepository,
   );
 
-  final packPickerController = PackPickerController(
+  final packPickerController = AddonController(
+    addonPicker: addonPicker,
     addonRepository: addonRepository,
     logger: logger,
   );
@@ -38,10 +44,11 @@ void main() async {
   await settingsController.loadSettings();
 
   runApp(AddonMergerApp(
+    addonController: packPickerController,
+    addonPicker: addonPicker,
     logger: logger,
     mergeController: mergeController,
     packController: packController,
-    packPickerController: packPickerController,
     settingsController: settingsController,
   ));
 }

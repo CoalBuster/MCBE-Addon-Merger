@@ -33,9 +33,9 @@ class MergeController with ChangeNotifier {
     _comparePackController.addListener(notifyListeners);
   }
 
-  Pack? get basePack => _basePackController.pack;
+  Manifest? get basePack => _basePackController.pack;
   PackContent? get basePackContent => _basePackController.packContent;
-  Pack? get comparePack => _comparePackController.pack;
+  Manifest? get comparePack => _comparePackController.pack;
   PackContent? get comparePackContent => _comparePackController.packContent;
   List<PackDifference> get diff => UnmodifiableListView(_diff);
   bool get packsLoading =>
@@ -145,19 +145,19 @@ class MergeController with ChangeNotifier {
     );
   }
 
-  Future<bool> loadBasePack(Pack? basePack) =>
-      _basePackController.loadAsync(basePack);
+  // Future<bool> loadBasePack(Pack? basePack) =>
+  //     _basePackController.loadAsync(basePack);
 
-  Future<bool> loadBasePackByPathAsync(String basePackPath) async {
-    final basePack = await addonRepository.fetchPackByPath(basePackPath);
-    return _basePackController.loadAsync(basePack);
-  }
+  // Future<bool> loadBasePackByPathAsync(String basePackPath) async {
+  //   final basePack = await addonRepository.fetchPackByPath(basePackPath);
+  //   return _basePackController.loadAsync(basePack);
+  // }
 
-  Future<bool> loadComparePack(Pack? comparePack) =>
-      _comparePackController.loadAsync(comparePack);
+  // Future<bool> loadComparePack(Pack? comparePack) =>
+  //     _comparePackController.loadAsync(comparePack);
 
-  Future<bool> loadComparePackByPathAsync(String comparePackPath) async {
-    final comparePack = await addonRepository.fetchPackByPath(comparePackPath);
-    return _comparePackController.loadAsync(comparePack);
-  }
+  // Future<bool> loadComparePackByPathAsync(String comparePackPath) async {
+  //   final comparePack = await addonRepository.fetchPackByPath(comparePackPath);
+  //   return _comparePackController.loadAsync(comparePack);
+  // }
 }

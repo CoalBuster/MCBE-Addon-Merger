@@ -5,10 +5,10 @@ import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
 
 class ManifestView extends StatelessWidget {
-  final Pack pack;
+  final Manifest manifest;
 
   const ManifestView({
-    required this.pack,
+    required this.manifest,
     Key? key,
   }) : super(key: key);
 
@@ -20,29 +20,29 @@ class ManifestView extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Image.file(
-            File(path.absolute(pack.directory.path, 'pack_icon.png')),
-            cacheHeight: 512,
-            cacheWidth: 512,
-            height: 64,
-            width: 64,
-          ),
+          // child: Image.file(
+          //   File(path.absolute(pack.directory.path, 'pack_icon.png')),
+          //   cacheHeight: 512,
+          //   cacheWidth: 512,
+          //   height: 64,
+          //   width: 64,
+          // ),
         ),
         Expanded(
           child: Column(
             children: [
-              Text((pack.manifest.isBehaviorPack
+              Text((manifest.isBehaviorPack
                       ? 'Behavior Pack'
-                      : pack.manifest.isResourcePack
+                      : manifest.isResourcePack
                           ? 'Resource Pack'
                           : 'Unknown Pack') +
-                  ' (${pack.manifest.modules.map((e) => e.type.name).join('+')})'),
+                  ' (${manifest.modules.map((e) => e.type.name).join('+')})'),
               Text(
-                pack.manifest.header.name,
+                manifest.header.name,
                 style: textTheme.titleLarge,
               ),
               Text(
-                'v${pack.manifest.header.version} | ${pack.manifest.header.uuid}',
+                'v${manifest.header.version} | ${manifest.header.uuid}',
                 style: textTheme.bodyText1,
               ),
             ],

@@ -8,7 +8,7 @@ class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
 
   bool _loading = false;
-  Pack? _pack;
+  Manifest? _pack;
   PackContent? _packContent;
   String? _packElementName;
   String? _packElementPath;
@@ -19,7 +19,7 @@ class PackController with ChangeNotifier {
   });
 
   bool get loading => _loading;
-  Pack? get pack => _pack;
+  Manifest? get pack => _pack;
   PackContent? get packContent => _packContent;
   List<Patch>? get patches => _patches;
   PackElement? get selectedElement => _packElementPath == null
@@ -52,18 +52,19 @@ class PackController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> loadAsync(Pack? pack) async {
+  Future<bool> loadPackAsync(List<int>? data) async {
     clear();
-
-    if (pack == null) {
-      return false;
-    }
-
-    _pack = pack;
     _loading = true;
     notifyListeners();
 
-    _packContent = await addonRepository.fetchPackContentAsync(pack);
+    if (data == null) {
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+
+    await addonRepository.uploadPack(data);
+    // _packContent = await addonRepository.listElementsByPackId();
     _loading = false;
     notifyListeners();
     return true;
@@ -73,5 +74,18 @@ class PackController with ChangeNotifier {
     _packElementPath = path;
     _packElementName = name;
     notifyListeners();
+  }
+
+  Future<bool> loadPackByIdAsync(Manifest pack) async {
+    clear();
+    _loading = true;
+    notifyListeners();
+
+    _pack = pack;
+    _packContent = await addonRepository.listElementsByPackId(pack.header.uuid);
+
+    _loading = false;
+    notifyListeners();
+    return _packContent != null;
   }
 }

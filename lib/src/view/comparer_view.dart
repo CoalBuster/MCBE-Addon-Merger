@@ -8,8 +8,8 @@ import '../model/pack_difference.dart';
 import '../util/pluralizer.dart';
 
 class ComparerView extends StatelessWidget {
-  final Pack basePack;
-  final Pack comparePack;
+  final Manifest basePack;
+  final Manifest comparePack;
   final List<PackDifference> diff;
   final Function(PackDifference difference)? onDiffSelected;
   final ScrollController? scrollController;
@@ -65,21 +65,21 @@ class ComparerView extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.file(
-          File(path.absolute(basePack.directory.path, filename)),
-          cacheHeight: 512,
-          cacheWidth: 512,
-          height: 64,
-          width: 64,
-        ),
+        // Image.file(
+        //   File(path.absolute(basePack.directory.path, filename)),
+        //   cacheHeight: 512,
+        //   cacheWidth: 512,
+        //   height: 64,
+        //   width: 64,
+        // ),
         const Icon(Icons.arrow_forward),
-        Image.file(
-          File(path.absolute(comparePack.directory.path, filename)),
-          cacheHeight: 512,
-          cacheWidth: 512,
-          height: 64,
-          width: 64,
-        ),
+        // Image.file(
+        //   File(path.absolute(comparePack.directory.path, filename)),
+        //   cacheHeight: 512,
+        //   cacheWidth: 512,
+        //   height: 64,
+        //   width: 64,
+        // ),
       ],
     );
   }

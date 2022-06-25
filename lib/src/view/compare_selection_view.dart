@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/merge_controller.dart';
-import '../layout/pack_picker_layout.dart';
+import '../layout/addon_layout.dart';
 
 class CompareSelectionView extends AnimatedWidget {
   final MergeController mergeController;
@@ -20,7 +20,7 @@ class CompareSelectionView extends AnimatedWidget {
         ListTile(
           title: mergeController.basePack == null
               ? const Text('Pick Base Pack')
-              : Text(mergeController.basePack!.manifest.header.name),
+              : Text(mergeController.basePack!.header.name),
           subtitle: mergeController.basePack == null
               ? const Text('Select..')
               : const Text('Base Pack'),
@@ -32,7 +32,7 @@ class CompareSelectionView extends AnimatedWidget {
         ListTile(
           title: mergeController.comparePack == null
               ? const Text('Pick Comparing Pack')
-              : Text(mergeController.comparePack!.manifest.header.name),
+              : Text(mergeController.comparePack!.header.name),
           subtitle: mergeController.comparePack == null
               ? const Text('Select..')
               : const Text('Comparing Pack'),
@@ -46,14 +46,14 @@ class CompareSelectionView extends AnimatedWidget {
   }
 
   _pickBase(BuildContext context) async {
-    final _pack =
-        await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
-    mergeController.loadBasePack(_pack);
+    // final _pack =
+    //     await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
+    // mergeController.loadBasePack(_pack);
   }
 
   _pickCompare(BuildContext context) async {
-    final _pack =
-        await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
-    mergeController.loadComparePack(_pack);
+    // final _pack =
+    //     await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
+    // mergeController.loadComparePack(_pack);
   }
 }
