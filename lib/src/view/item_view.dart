@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
+import '../model/component/component.dart';
+import '../model/component/food.dart';
+import '../model/component/seed.dart';
+import '../model/item.dart';
+import '../model/version.dart';
 import 'tile/patched_tile.dart';
 
 class ItemDetailView extends StatelessWidget {
@@ -27,18 +31,18 @@ class ItemDetailView extends StatelessWidget {
                       ? ''
                       : '\nCategory: ${item.description.category}')),
         ),
-        if (item.components?.isEmpty ?? true)
+        if (item.components.isEmpty)
           const ListTile(
             title: Text('Components'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (item.components?.isNotEmpty ?? false)
+        if (item.components.isNotEmpty)
           ExpansionTile(
             initiallyExpanded: true,
             title: const Text('Components'),
-            subtitle: Text('${item.components!.length} component(s)'),
-            children: item.components!.entries
+            subtitle: Text('${item.components.length} component(s)'),
+            children: item.components.entries
                 .map((e) => _buildComponent(e.key, e.value))
                 .toList(),
           ),
@@ -46,29 +50,27 @@ class ItemDetailView extends StatelessWidget {
     );
   }
 
-  Widget _buildComponent(String componentName, dynamic componentContent) {
-    switch (componentName) {
-      case 'minecraft:food':
-        final food = ItemComponentFood.fromJson(componentContent);
+  Widget _buildComponent(String componentName, Component component) {
+    switch (component.runtimeType) {
+      case FoodComponent:
         return PatchedTile(
           title: 'Food',
-          subtitle: Text(food.toString()),
+          subtitle: Text(component.toString()),
         );
-      case 'minecraft:seed':
-        final seed = ItemComponentSeed.fromJson(componentContent);
+      case SeedComponent:
         return PatchedTile(
           title: 'Seed',
-          subtitle: Text(seed.toString()),
+          subtitle: Text(component.toString()),
         );
-      case 'minecraft:use_duration':
-        return PatchedTile(
-          title: 'Use Duration',
-          subtitle: Text('$componentContent tick(s)'),
-        );
+      // case UseDurationComponent:
+      //   return PatchedTile(
+      //     title: 'Use Duration',
+      //     subtitle: Text('$componentContent tick(s)'),
+      //   );
       default:
         return ListTile(
           title: Text(componentName),
-          subtitle: Text(componentContent.toString()),
+          subtitle: Text(component.toString()),
         );
     }
   }

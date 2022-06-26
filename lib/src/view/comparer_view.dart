@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
-import 'package:path/path.dart' as path;
 
+import '../model/manifest.dart';
 import '../model/pack_difference.dart';
+import '../model/pack_element.dart';
+import '../model/pack_image.dart';
 import '../util/pluralizer.dart';
 
 class ComparerView extends StatelessWidget {

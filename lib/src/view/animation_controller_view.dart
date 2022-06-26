@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart' as mc;
+import '../model/animation_controller.dart' as mc;
+import '../model/version.dart';
 
 class AnimationControllerDetailView extends StatelessWidget {
   final Map<String, mc.AnimationController> animationControllers;
-  final mc.Version? formatVersion;
+  final Version? formatVersion;
   final String? name;
 
   const AnimationControllerDetailView({

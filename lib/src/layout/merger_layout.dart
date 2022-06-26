@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger/src/controller/addon_controller.dart';
-import 'package:mcbe_addon_merger/src/repository/addon_picker.dart';
-import 'package:mcbe_addon_merger/src/repository/addon_repository.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
+import '../controller/addon_controller.dart';
 import '../controller/merge_controller.dart';
 import '../controller/pack_controller.dart';
+import '../repository/addon_picker.dart';
 import 'compare_selection_layout.dart';
 import 'pack_detail_layout.dart';
 import 'addon_layout.dart';

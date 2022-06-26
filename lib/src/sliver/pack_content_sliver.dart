@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
+import '../model/module_type.dart';
+import '../model/pack_content.dart';
+import '../model/pack_element_type.dart';
 import '../util/pluralizer.dart';
 
 class PackContentSliver extends StatelessWidget {

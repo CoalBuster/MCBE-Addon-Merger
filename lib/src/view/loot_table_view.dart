@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as path;
+
+import '../model/loot_table.dart';
+import '../model/version.dart';
 
 class LootTableDetailView extends StatelessWidget {
   final List<LootTable> pools;

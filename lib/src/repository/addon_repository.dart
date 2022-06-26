@@ -2,8 +2,12 @@ import 'dart:convert';
 
 import 'package:archive/archive.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 import 'package:path/path.dart' as paths;
+
+import '../model/manifest.dart';
+import '../model/pack_content.dart';
+import '../model/pack_element.dart';
+import '../model/pack_image.dart';
 
 class AddonRepository {
   static const ignoredDirectories = [

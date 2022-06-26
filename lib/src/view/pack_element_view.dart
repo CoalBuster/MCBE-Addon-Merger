@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
+import '../model/pack_element.dart';
+import '../model/pack_element_type.dart';
 import '../model/patch.dart';
 import 'animation_controller_view.dart';
 import 'entity_view.dart';

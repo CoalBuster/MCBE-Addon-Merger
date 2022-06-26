@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
+import '../model/component/component.dart';
+import '../model/component/interact.dart';
 import '../model/patch.dart';
+import '../model/server_entity.dart';
+import '../model/version.dart';
 import 'tile/interact_tile.dart';
 import 'tile/patched_tile.dart';
 
@@ -61,15 +64,14 @@ Animate: ${entity.description.scripts?.animate?.join(', ')}
     );
   }
 
-  Widget _buildComponent(String componentName, dynamic componentContent) {
-    switch (componentName) {
-      case 'minecraft:interact':
-        final interact = EntityComponentInteract.fromJson(componentContent);
-        return InteractTile(interact: interact);
+  Widget _buildComponent(String componentName, Component component) {
+    switch (component.runtimeType) {
+      case InteractComponent:
+        return InteractTile(interact: component as InteractComponent);
       default:
         return PatchedTile(
           title: componentName,
-          value: componentContent,
+          value: component.toJson(),
           patches: _diff('/minecraft:entity/components/$componentName'),
         );
     }

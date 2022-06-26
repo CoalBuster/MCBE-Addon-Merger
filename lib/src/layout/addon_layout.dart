@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/addon_controller.dart';
 import '../controller/pack_controller.dart';
+import '../model/manifest.dart';
 import '../view/pack_list_view.dart';
 import 'pack_detail_layout.dart';
 

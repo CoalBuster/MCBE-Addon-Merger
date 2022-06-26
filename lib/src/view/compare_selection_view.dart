@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/merge_controller.dart';
 import '../layout/addon_layout.dart';

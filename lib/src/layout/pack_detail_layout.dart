@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger_core/mcbe_addon_merger_core.dart';
 
 import '../controller/pack_controller.dart';
+import '../model/pack_element_type.dart';
 import '../view/manifest_view.dart';
 import '../sliver/pack_content_sliver.dart';
 import 'pack_element_layout.dart';
