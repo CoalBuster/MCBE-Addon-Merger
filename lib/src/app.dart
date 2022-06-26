@@ -8,7 +8,7 @@ import 'controller/pack_controller.dart';
 import 'controller/addon_controller.dart';
 import 'layout/compare_selection_layout.dart';
 import 'layout/comparer_layout.dart';
-import 'layout/merger_layout.dart';
+import 'layout/main_layout.dart';
 import 'layout/pack_detail_layout.dart';
 import 'layout/pack_element_layout.dart';
 import 'layout/addon_layout.dart';
@@ -65,9 +65,10 @@ class AddonMergerApp extends StatelessWidget {
                 ),
             CompareSelectionLayout.routeName: (context) =>
                 CompareSelectionLayout(
+                  addonPicker: addonPicker,
                   mergeController: mergeController,
                 ),
-            MergerLayout.routeName: (context) => MergerLayout(
+            MainLayout.routeName: (context) => MainLayout(
                   addonController: addonController,
                   addonPicker: addonPicker,
                   logger: logger,

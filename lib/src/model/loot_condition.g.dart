@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'chance.dart';
+part of 'loot_condition.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -19,4 +19,28 @@ Map<String, dynamic> _$LootConditionChanceToJson(
       'condition': instance.condition,
       'chance': instance.chance,
       'looting_multiplier': instance.lootingMultiplier,
+    };
+
+LootConditionPlayerKill _$LootConditionPlayerKillFromJson(
+        Map<String, dynamic> json) =>
+    LootConditionPlayerKill(
+      condition: json['condition'] as String,
+    );
+
+Map<String, dynamic> _$LootConditionPlayerKillToJson(
+        LootConditionPlayerKill instance) =>
+    <String, dynamic>{
+      'condition': instance.condition,
+    };
+
+LootConditionUnknown _$LootConditionUnknownFromJson(
+        Map<String, dynamic> json) =>
+    LootConditionUnknown(
+      condition: json['condition'] as String,
+    );
+
+Map<String, dynamic> _$LootConditionUnknownToJson(
+        LootConditionUnknown instance) =>
+    <String, dynamic>{
+      'condition': instance.condition,
     };

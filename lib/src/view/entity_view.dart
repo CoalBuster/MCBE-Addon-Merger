@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/component/component.dart';
-import '../model/component/interact.dart';
+import '../model/component.dart';
 import '../model/patch.dart';
 import '../model/server_entity.dart';
 import '../model/version.dart';

@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../controller/merge_controller.dart';
+import '../repository/addon_picker.dart';
 import '../view/compare_selection_view.dart';
 import 'comparer_layout.dart';
 
 class CompareSelectionLayout extends AnimatedWidget {
   static const routeName = '/compare-picker';
 
+  final AddonPicker addonPicker;
   final MergeController mergeController;
 
   const CompareSelectionLayout({
+    required this.addonPicker,
     required this.mergeController,
     Key? key,
   }) : super(key: key, listenable: mergeController);
@@ -21,6 +24,7 @@ class CompareSelectionLayout extends AnimatedWidget {
         title: const Text('Select Packs to Compare'),
       ),
       body: CompareSelectionView(
+        addonPicker: addonPicker,
         mergeController: mergeController,
       ),
       floatingActionButton:

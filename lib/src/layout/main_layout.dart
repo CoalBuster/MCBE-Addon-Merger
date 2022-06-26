@@ -9,8 +9,7 @@ import 'compare_selection_layout.dart';
 import 'pack_detail_layout.dart';
 import 'addon_layout.dart';
 
-/// Displays detailed information about a SampleItem.
-class MergerLayout extends StatelessWidget {
+class MainLayout extends StatelessWidget {
   static const routeName = '/';
 
   final AddonController addonController;
@@ -19,7 +18,7 @@ class MergerLayout extends StatelessWidget {
   final MergeController mergeController;
   final PackController packController;
 
-  const MergerLayout({
+  const MainLayout({
     required this.addonController,
     required this.addonPicker,
     required this.logger,
@@ -48,7 +47,7 @@ class MergerLayout extends StatelessWidget {
               const SizedBox(height: 8),
               ElevatedButton(
                 child: const Text('Compare Packs'),
-                onPressed: null, //() => _compare(context),
+                onPressed: () => _compare(context),
               ),
             ],
           ),
@@ -76,15 +75,5 @@ class MergerLayout extends StatelessWidget {
       await packController.loadPackAsync(pickResult.data);
       Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
     }
-
-    // final _pack =
-    //     await Navigator.pushNamed<Pack>(context, PackPickerLayout.routeName);
-
-    // final packs = await addonPicker.pickAddonAsync();
-
-    // if (_pack != null) {
-    //   packController.loadAsync(_pack);
-    //   Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
-    // }
   }
 }

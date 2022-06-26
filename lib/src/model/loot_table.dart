@@ -1,8 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'condition/loot_condition.dart';
-import 'condition/loot_conditions.dart';
-import 'function/function.dart';
-import 'function/functions.dart';
+import 'loot_condition.dart';
+import 'function.dart';
 import 'range.dart';
 
 part 'loot_table.g.dart';

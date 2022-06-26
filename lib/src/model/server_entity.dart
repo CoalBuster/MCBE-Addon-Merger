@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'component/component.dart';
-import 'component/components.dart';
+import 'component.dart';
 
 part 'server_entity.g.dart';
 

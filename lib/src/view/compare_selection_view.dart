@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../controller/merge_controller.dart';
-import '../layout/addon_layout.dart';
+import '../repository/addon_picker.dart';
 
 class CompareSelectionView extends AnimatedWidget {
+  final AddonPicker addonPicker;
   final MergeController mergeController;
 
   const CompareSelectionView({
+    required this.addonPicker,
     required this.mergeController,
     Key? key,
   }) : super(key: key, listenable: mergeController);

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/component/component.dart';
-import '../model/component/food.dart';
-import '../model/component/seed.dart';
+import '../model/component.dart';
 import '../model/item.dart';
 import '../model/version.dart';
 import 'tile/patched_tile.dart';

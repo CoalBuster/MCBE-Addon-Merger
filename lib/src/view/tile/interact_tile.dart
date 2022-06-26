@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../model/component/interact.dart';
+import '../../model/component.dart';
 
 class InteractTile extends StatelessWidget {
   const InteractTile({
