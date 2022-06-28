@@ -13,6 +13,7 @@ class AddonRepository {
   static const ignoredDirectories = [
     '.git',
     'documentation',
+    'texts',
   ];
   static const ignoredFiles = [
     '.gitignore',
