@@ -239,11 +239,8 @@ class AddonRepository {
 
       // logger.i('[${element.type?.asString()}] ${path.basename(file.path)}');
       return element;
-    } on FormatException catch (e) {
-      logger.w('Could not parse ${paths.basename(file.name)}: ${e.message}');
-      return null;
-    } catch (e) {
-      logger.w('Could not parse ${paths.basename(file.name)}: $e');
+    } catch (e, s) {
+      logger.w('Could not parse ${paths.basename(file.name)}: $e\n$s');
       return null;
     }
   }

@@ -9,7 +9,7 @@ part of 'server_entity.dart';
 ServerEntity _$ServerEntityFromJson(Map<String, dynamic> json) => ServerEntity(
       componentGroups: json['component_groups'] as Map<String, dynamic>?,
       components:
-          Components.fromJson(json['components'] as Map<String, dynamic>),
+          Components.fromJson(json['components'] as Map<String, dynamic>?),
       description: ServerEntityDescription.fromJson(
           json['description'] as Map<String, dynamic>),
     );

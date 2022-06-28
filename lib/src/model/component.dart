@@ -28,7 +28,11 @@ class Components {
     'minecraft:seed': SeedComponent.fromJson,
   };
 
-  static Map<String, Component> fromJson(Map<String, dynamic> json) {
+  static Map<String, Component>? fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return null;
+    }
+
     return Map.fromEntries(json.entries.map((e) => MapEntry(
           e.key,
           _components[e.key]?.call(e.value) ??
@@ -36,7 +40,11 @@ class Components {
         )));
   }
 
-  static Map<String, dynamic>? toJson(Map<String, Component> components) {
+  static Map<String, dynamic>? toJson(Map<String, Component>? components) {
+    if (components == null) {
+      return null;
+    }
+
     return Map.fromEntries(components.entries.map((e) => MapEntry(
           e.key,
           e.value.toJson(),
@@ -95,16 +103,21 @@ class InteractComponent implements Component {
         ComponentParam('Interactions', interactions),
       ];
 
-  factory InteractComponent.fromJson(Map<String, dynamic> json) =>
-      _$InteractComponentFromJson(json);
+  factory InteractComponent.fromJson(Map<String, dynamic> json) {
+    if (json['interactions'] is Map<String, dynamic>) {
+      json['interactions'] = [json['interactions']];
+    }
+    return _$InteractComponentFromJson(json);
+  }
 
+  @override
   Map<String, dynamic> toJson() => _$InteractComponentToJson(this);
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Interaction {
-  final int hurtItem;
-  final String interactText;
+  final int? hurtItem;
+  final String? interactText;
   final Trigger onInteract;
   final String? playSounds;
   final bool swing;
@@ -129,7 +142,7 @@ class Interaction {
 @JsonSerializable(fieldRename: FieldRename.snake)
 class SeedComponent implements Component {
   final String cropResult;
-  final String plantAt;
+  final List<String>? plantAt;
 
   SeedComponent({
     required this.cropResult,
@@ -142,14 +155,20 @@ class SeedComponent implements Component {
         ComponentParam('Get Crop', cropResult),
       ];
 
-  factory SeedComponent.fromJson(Map<String, dynamic> json) =>
-      _$SeedComponentFromJson(json);
+  factory SeedComponent.fromJson(Map<String, dynamic> json) {
+    if (json['plant_at'] is String) {
+      json['plant_at'] = [json['plant_at']];
+    }
+    return _$SeedComponentFromJson(json);
+  }
 
   @override
   Map<String, dynamic> toJson() => _$SeedComponentToJson(this);
 
   @override
-  String toString() => 'Plant on $plantAt to grow $cropResult';
+  String toString() =>
+      'Plant${plantAt == null ? '' : ' on ${plantAt!.join(' or ')}'} '
+      'to grow $cropResult';
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

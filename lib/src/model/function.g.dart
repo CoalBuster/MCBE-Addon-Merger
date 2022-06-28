@@ -33,7 +33,7 @@ Map<String, dynamic> _$LootFunctionDamageToJson(LootFunctionDamage instance) =>
 LootFunctionData _$LootFunctionDataFromJson(Map<String, dynamic> json) =>
     LootFunctionData(
       function: json['function'] as String,
-      data: json['data'] as int,
+      data: CountOrRange.fromJson(json['data']),
     );
 
 Map<String, dynamic> _$LootFunctionDataToJson(LootFunctionData instance) =>

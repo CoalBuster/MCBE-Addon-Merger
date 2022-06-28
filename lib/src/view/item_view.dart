@@ -29,18 +29,18 @@ class ItemDetailView extends StatelessWidget {
                       ? ''
                       : '\nCategory: ${item.description.category}')),
         ),
-        if (item.components.isEmpty)
+        if (item.components?.isEmpty ?? true)
           const ListTile(
             title: Text('Components'),
             subtitle: Text('None'),
             enabled: false,
           ),
-        if (item.components.isNotEmpty)
+        if (item.components?.isNotEmpty ?? false)
           ExpansionTile(
             initiallyExpanded: true,
             title: const Text('Components'),
-            subtitle: Text('${item.components.length} component(s)'),
-            children: item.components.entries
+            subtitle: Text('${item.components!.length} component(s)'),
+            children: item.components!.entries
                 .map((e) => _buildComponent(e.key, e.value))
                 .toList(),
           ),

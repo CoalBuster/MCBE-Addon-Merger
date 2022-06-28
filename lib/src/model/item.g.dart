@@ -8,7 +8,7 @@ part of 'item.dart';
 
 Item _$ItemFromJson(Map<String, dynamic> json) => Item(
       components:
-          Components.fromJson(json['components'] as Map<String, dynamic>),
+          Components.fromJson(json['components'] as Map<String, dynamic>?),
       description:
           ItemDescription.fromJson(json['description'] as Map<String, dynamic>),
     );

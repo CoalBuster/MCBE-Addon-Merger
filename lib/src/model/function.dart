@@ -96,7 +96,7 @@ class LootFunctionDamage extends LootFunction {
 /// Loot Data
 @JsonSerializable(fieldRename: FieldRename.snake)
 class LootFunctionData extends LootFunction {
-  final int data;
+  final CountOrRange data;
 
   LootFunctionData({
     required String function,

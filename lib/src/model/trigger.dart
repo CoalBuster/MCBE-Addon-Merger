@@ -4,9 +4,9 @@ part 'trigger.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Trigger {
-  final String event;
-  final TriggerFilter filters;
-  final String target;
+  final String? event;
+  final TriggerCondition filters;
+  final String? target;
 
   Trigger({
     required this.event,
@@ -24,41 +24,31 @@ class Trigger {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class TriggerFilter {
+class TriggerCondition {
   final List<TriggerCondition>? allOf;
   final List<TriggerCondition>? anyOf;
-
-  TriggerFilter({
-    this.allOf,
-    this.anyOf,
-  });
-
-  factory TriggerFilter.fromJson(Map<String, dynamic> json) =>
-      _$TriggerFilterFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TriggerFilterToJson(this);
-
-  @override
-  String toString() {
-    if ((allOf?.isEmpty ?? true) && (anyOf?.isEmpty ?? true)) {
-      return 'Always';
-    }
-
-    return (allOf?.join(' AND ') ?? '') + (anyOf?.join(' OR ') ?? '');
-  }
-}
-
-@JsonSerializable(fieldRename: FieldRename.snake)
-class TriggerCondition {
-  final String test;
-  final String subject;
-  final String? value;
+  final String? domain;
+  final String? operator;
+  final String? subject;
+  final String? test;
+  final dynamic value;
 
   TriggerCondition({
-    required this.subject,
     required this.test,
+    this.allOf,
+    this.anyOf,
+    this.domain,
+    this.operator,
+    this.subject,
     this.value,
-  });
+  }) {
+    if (test == null && _isCondition) {
+      throw StateError(
+          "Condition must contain either 'test' or an 'allOf/anyOf'");
+    }
+  }
+
+  bool get _isCondition => (allOf?.isEmpty ?? true) && (anyOf?.isEmpty ?? true);
 
   factory TriggerCondition.fromJson(Map<String, dynamic> json) =>
       _$TriggerConditionFromJson(json);
@@ -66,5 +56,12 @@ class TriggerCondition {
   Map<String, dynamic> toJson() => _$TriggerConditionToJson(this);
 
   @override
-  String toString() => '$subject $test ${value ?? ''}';
+  String toString() {
+    if (_isCondition) {
+      return '${subject == null ? 'this' : domain == null ? subject : "$subject's $domain"}'
+          ' $test ${operator == null ? value : '$operator $value'}';
+    }
+
+    return (allOf?.join(' AND ') ?? '') + (anyOf?.join(' OR ') ?? '');
+  }
 }

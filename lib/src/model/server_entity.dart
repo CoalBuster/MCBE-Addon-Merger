@@ -8,7 +8,7 @@ part 'server_entity.g.dart';
 class ServerEntity {
   final Map<String, dynamic>? componentGroups;
   @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
-  final Map<String, Component> components;
+  final Map<String, Component>? components;
   final ServerEntityDescription description;
 
   ServerEntity({

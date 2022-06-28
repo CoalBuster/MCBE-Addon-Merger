@@ -7,7 +7,7 @@ part 'item.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Item {
   @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
-  final Map<String, Component> components;
+  final Map<String, Component>? components;
   final ItemDescription description;
 
   Item({

@@ -17,8 +17,11 @@ class InteractTile extends StatelessWidget {
       subtitle: Text('${interact.interactions.length} possible interaction(s)'),
       children: interact.interactions
           .map((e) => ListTile(
-                title: Text(e.interactText),
-                subtitle: Text('Condition: ${e.onInteract.filters}'),
+                title: Text(e.interactText ?? '<nameless-interaction>'),
+                subtitle: Text('Condition: ${e.onInteract.filters}' +
+                    (e.onInteract.event == null
+                        ? ''
+                        : '\nEvent: ${e.onInteract.event} on ${e.onInteract.target ?? 'self'}')),
               ))
           .toList(),
     );

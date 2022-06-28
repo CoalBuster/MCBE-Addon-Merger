@@ -48,8 +48,8 @@ Map<String, dynamic> _$InteractComponentToJson(InteractComponent instance) =>
     };
 
 Interaction _$InteractionFromJson(Map<String, dynamic> json) => Interaction(
-      hurtItem: json['hurt_item'] as int,
-      interactText: json['interact_text'] as String,
+      hurtItem: json['hurt_item'] as int?,
+      interactText: json['interact_text'] as String?,
       onInteract: Trigger.fromJson(json['on_interact'] as Map<String, dynamic>),
       playSounds: json['play_sounds'] as String?,
       swing: json['swing'] as bool? ?? false,
@@ -69,7 +69,9 @@ Map<String, dynamic> _$InteractionToJson(Interaction instance) =>
 SeedComponent _$SeedComponentFromJson(Map<String, dynamic> json) =>
     SeedComponent(
       cropResult: json['crop_result'] as String,
-      plantAt: json['plant_at'] as String,
+      plantAt: (json['plant_at'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$SeedComponentToJson(SeedComponent instance) =>

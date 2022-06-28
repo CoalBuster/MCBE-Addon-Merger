@@ -52,13 +52,20 @@ Animations: ${entity.description.animations?.entries.map((e) => '${e.key} (${e.v
 Animate: ${entity.description.scripts?.animate?.join(', ')}
           '''),
         ),
-        ExpansionTile(
-          title: const Text('Components'),
-          subtitle: Text('${entity.components.length} component(s)'),
-          children: entity.components.entries
-              .map((e) => _buildComponent(e.key, e.value))
-              .toList(),
-        ),
+        if (entity.components?.isEmpty ?? true)
+          const ListTile(
+            title: Text('Components'),
+            subtitle: Text('None'),
+            enabled: false,
+          ),
+        if (entity.components?.isNotEmpty ?? false)
+          ExpansionTile(
+            title: const Text('Components'),
+            subtitle: Text('${entity.components!.length} component(s)'),
+            children: entity.components!.entries
+                .map((e) => _buildComponent(e.key, e.value))
+                .toList(),
+          ),
       ],
     );
   }
