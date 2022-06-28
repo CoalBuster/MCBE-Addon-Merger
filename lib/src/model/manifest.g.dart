@@ -7,8 +7,8 @@ part of 'manifest.dart';
 // **************************************************************************
 
 Manifest _$ManifestFromJson(Map<String, dynamic> json) => Manifest(
-      dependencies: (json['dependencies'] as List<dynamic>)
-          .map((e) => ManifestDependency.fromJson(e as Map<String, dynamic>))
+      dependencies: (json['dependencies'] as List<dynamic>?)
+          ?.map((e) => ManifestDependency.fromJson(e as Map<String, dynamic>))
           .toList(),
       formatVersion: json['format_version'] as int,
       header: ManifestHeader.fromJson(json['header'] as Map<String, dynamic>),

@@ -66,7 +66,17 @@ class PackController with ChangeNotifier {
     }
 
     await addonRepository.uploadPack(data);
-    // _packContent = await addonRepository.listElementsByPackId();
+    var packs = await addonRepository.listPacksAsync();
+
+    if (packs.length != 1) {
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+
+    _pack = packs.single;
+    _packContent =
+        await addonRepository.listElementsByPackId(packs.single.header.uuid);
     _loading = false;
     notifyListeners();
     return true;

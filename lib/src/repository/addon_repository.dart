@@ -148,6 +148,7 @@ class AddonRepository {
       logger.i('Successfully parsed Manifest (uuid=${manifest.header.uuid})');
       return manifest;
     } catch (e) {
+      logger.w('Failed to read Manifest', e);
       return null;
     }
   }

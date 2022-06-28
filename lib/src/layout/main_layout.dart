@@ -69,11 +69,11 @@ class MainLayout extends StatelessWidget {
     }
 
     if (pickResult.isAddon) {
-      await addonController.loadAddonAsync(pickResult.data);
       Navigator.restorablePushNamed(context, AddonLayout.routeName);
+      await addonController.loadAddonAsync(pickResult.data);
     } else {
-      await packController.loadPackAsync(pickResult.data);
       Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
+      packController.loadPackAsync(pickResult.data);
     }
   }
 }

@@ -9,7 +9,7 @@ part 'manifest.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class Manifest {
-  final List<ManifestDependency> dependencies;
+  final List<ManifestDependency>? dependencies;
   final int formatVersion;
   final ManifestHeader header;
   final List<ManifestModule> modules;
