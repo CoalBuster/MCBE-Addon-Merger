@@ -29,15 +29,15 @@ class AddonLayout extends AnimatedWidget {
         //       onPressed: () => packPickerController.loadAsync())
         // ],
       ),
-      body: addonController.loading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : PackListView(
-              onPackTapped: (pack) => _onPacksSelected(context, pack),
-              packs: addonController.packs,
-              // selected: _packs,
-            ),
+      // body: addonController.loading
+      //     ? const Center(
+      //         child: CircularProgressIndicator(),
+      //       )
+      //     : PackListView(
+      //         onPackTapped: (pack) => _onPacksSelected(context, pack),
+      //         packs: addonController.packs,
+      //         // selected: _packs,
+      //       ),
     );
   }
 

@@ -6,6 +6,21 @@ part of 'animation_controller.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+AnimationControllers _$AnimationControllersFromJson(
+        Map<String, dynamic> json) =>
+    AnimationControllers(
+      controllers: (json['controllers'] as Map<String, dynamic>).map(
+        (k, e) => MapEntry(
+            k, AnimationController.fromJson(e as Map<String, dynamic>)),
+      ),
+    );
+
+Map<String, dynamic> _$AnimationControllersToJson(
+        AnimationControllers instance) =>
+    <String, dynamic>{
+      'controllers': instance.controllers,
+    };
+
 AnimationController _$AnimationControllerFromJson(Map<String, dynamic> json) =>
     AnimationController(
       states: (json['states'] as Map<String, dynamic>).map(

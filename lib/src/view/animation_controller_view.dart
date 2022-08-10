@@ -3,7 +3,7 @@ import '../model/animation_controller.dart' as mc;
 import '../model/version.dart';
 
 class AnimationControllerDetailView extends StatelessWidget {
-  final Map<String, mc.AnimationController> animationControllers;
+  final mc.AnimationControllers animationControllers;
   final Version? formatVersion;
   final String? name;
 
@@ -16,18 +16,19 @@ class AnimationControllerDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animContr = animationControllers[name];
+    final animContr = animationControllers.controllers[name];
 
     if (animContr == null) {
-      return Text('Animation Controller $name not found');
+      return Center(
+        child: Text('Animation Controller $name not found'),
+      );
     }
 
     return ListView(
       restorationId: 'animationControllerListView',
       children: [
         ListTile(
-          title: Text(name!),
-          subtitle: formatVersion == null
+          title: formatVersion == null
               ? null
               : Text('Format Version: $formatVersion'),
         ),

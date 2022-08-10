@@ -7,10 +7,8 @@ import 'package:json_patch/json_patch.dart';
 import 'package:logger/logger.dart';
 
 import '../model/manifest.dart';
-import '../model/pack_content.dart';
 import '../model/pack_difference.dart';
 import '../model/pack_element.dart';
-import '../model/pack_element_type.dart';
 import '../model/pack_image.dart';
 import '../model/patch.dart';
 import '../repository/addon_repository.dart';
@@ -38,15 +36,16 @@ class MergeController with ChangeNotifier {
   }
 
   Manifest? get basePack => _basePackController.pack;
-  PackContent? get basePackContent => _basePackController.packContent;
+  List<PackElementInfo>? get basePackContent => _basePackController.elements;
   Manifest? get comparePack => _comparePackController.pack;
-  PackContent? get comparePackContent => _comparePackController.packContent;
+  List<PackElementInfo>? get comparePackContent =>
+      _comparePackController.elements;
   List<PackDifference> get diff => UnmodifiableListView(_diff);
   bool get packsLoading =>
       _basePackController.loading || _comparePackController.loading;
   bool get packsSelected =>
-      _basePackController.packContent != null &&
-      _comparePackController.packContent != null;
+      _basePackController.elements != null &&
+      _comparePackController.elements != null;
 
   void clear() {
     _basePackController.clear();
@@ -64,90 +63,90 @@ class MergeController with ChangeNotifier {
     }
 
     List<PackDifference> result = [];
-    for (var baseEntry in _basePackController.packContent!.files.entries) {
-      final diff = _compareEntry(baseEntry.key, baseEntry.value);
+    // for (var baseEntry in _basePackController.elements!) {
+    //   final diff = _compareEntry(baseEntry.key, baseEntry.value);
 
-      if (diff != null) {
-        result.add(diff);
-      }
-    }
+    //   if (diff != null) {
+    //     result.add(diff);
+    //   }
+    // }
 
     _diff = result;
     notifyListeners();
     return result;
   }
 
-  PackDifference? _compareEntry(String filename, dynamic base) {
-    if (base is PackElement) {
-      switch (base.type) {
-        case PackElementType.entity:
-          return _compareEntity(filename, base);
-        default:
-          return _compareFile(filename);
-      }
-    }
+  // PackDifference? _compareEntry(String filename, dynamic base) {
+  //   if (base is PackElement) {
+  //     switch (base.type) {
+  //       case PackElementType.entity:
+  //         return _compareEntity(filename, base);
+  //       default:
+  //         return _compareFile(filename);
+  //     }
+  //   }
 
-    switch (base?.runtimeType) {
-      case PackImage:
-        return _compareImage(base);
-      default:
-        return _compareFile(filename);
-    }
-  }
+  //   switch (base?.runtimeType) {
+  //     case PackImage:
+  //       return _compareImage(base);
+  //     default:
+  //       return _compareFile(filename);
+  //   }
+  // }
 
-  PackDifference? _compareEntity(String filename, PackElement baseEntity) {
-    final compareEntity = _comparePackController.packContent!.elements.entries
-        .firstWhereOrNull((file) =>
-            file.value.entity?.description.identifier ==
-            baseEntity.entity!.description.identifier)
-        ?.value;
+  // PackDifference? _compareEntity(String filename, PackElement baseEntity) {
+  //   final compareEntity = _comparePackController.elements
+  //       ?.firstWhereOrNull((file) =>
+  //           file.value.entity?.description.identifier ==
+  //           baseEntity.entity!.description.identifier)
+  //       ?.value;
 
-    if (compareEntity == null) {
-      return null;
-    }
+  //   if (compareEntity == null) {
+  //     return null;
+  //   }
 
-    final baseJson = jsonEncode(baseEntity);
-    final compJson = jsonEncode(compareEntity);
-    final diff = JsonPatch.diff(jsonDecode(baseJson), jsonDecode(compJson))
-        .map((e) => Patch.fromJson(e))
-        .toList();
-    logger.i('[ENTITY] [$filename] DIFF:\n  ${diff.join('\n  ')}');
-    return PackDifference(
-      filename: filename,
-      packElement: baseEntity,
-      patches: diff,
-    );
-  }
+  //   final baseJson = jsonEncode(baseEntity);
+  //   final compJson = jsonEncode(compareEntity);
+  //   final diff = JsonPatch.diff(jsonDecode(baseJson), jsonDecode(compJson))
+  //       .map((e) => Patch.fromJson(e))
+  //       .toList();
+  //   logger.i('[ENTITY] [$filename] DIFF:\n  ${diff.join('\n  ')}');
+  //   return PackDifference(
+  //     filename: filename,
+  //     packElement: baseEntity,
+  //     patches: diff,
+  //   );
+  // }
 
-  PackDifference? _compareFile(String filename) {
-    final compareFile = _comparePackController.packContent!.files.keys
-        .firstWhereOrNull((name) => name == filename);
+  // PackDifference? _compareFile(String filename) {
+  //   final compareFile = _comparePackController.packContent!.files.keys
+  //       .firstWhereOrNull((name) => name == filename);
 
-    if (compareFile == null) {
-      return null;
-    }
+  //   if (compareFile == null) {
+  //     return null;
+  //   }
 
-    logger.i('[FILE] [$filename] OVERIDDEN');
-    return PackDifference(
-      filename: filename,
-    );
-  }
+  //   logger.i('[FILE] [$filename] OVERIDDEN');
+  //   return PackDifference(
+  //     filename: filename,
+  //   );
+  // }
 
-  PackDifference? _compareImage(PackImage baseImage) {
-    final compareImage = _comparePackController.packContent!.files.entries
-        .firstWhereOrNull((element) => element.key == baseImage.path)
-        ?.value;
+  // PackDifference? _compareImage(PackImage baseImage) {
+  //   final compareImage = _comparePackController.packContent!.files.entries
+  //       .firstWhereOrNull((element) => element.key == baseImage.path)
+  //       ?.value;
 
-    if (compareImage is! PackImage) {
-      return null;
-    }
+  //   if (compareImage is! PackImage) {
+  //     return null;
+  //   }
 
-    logger.i('[IMAGE] [${baseImage.path}] OVERIDDEN');
-    return PackDifference(
-      filename: baseImage.path,
-      packElement: baseImage,
-    );
-  }
+  //   logger.i('[IMAGE] [${baseImage.path}] OVERIDDEN');
+  //   return PackDifference(
+  //     filename: baseImage.path,
+  //     packElement: baseImage,
+  //   );
+  // }
 
   // Future<bool> loadBasePack(Pack? basePack) =>
   //     _basePackController.loadAsync(basePack);

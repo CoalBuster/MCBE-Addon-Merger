@@ -1,11 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'component.dart';
+import 'pack_element.dart';
 
 part 'server_entity.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class ServerEntity {
+class ServerEntity extends PackElement {
   final Map<String, dynamic>? componentGroups;
   @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
   final Map<String, Component>? components;
@@ -17,9 +18,9 @@ class ServerEntity {
     required this.description,
   });
 
-  factory ServerEntity.fromJson(Map<String, dynamic> json) =>
-      _$ServerEntityFromJson(json);
+  factory ServerEntity.fromJson(dynamic json) => _$ServerEntityFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$ServerEntityToJson(this);
 }
 

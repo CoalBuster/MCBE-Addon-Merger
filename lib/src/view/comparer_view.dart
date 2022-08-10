@@ -50,14 +50,15 @@ class ComparerView extends StatelessWidget {
   }
 
   String _typeOfElementToString(dynamic packElement) {
-    switch (packElement?.runtimeType) {
-      case PackImage:
-        return 'Image';
-      case PackElement:
-        return (packElement as PackElement).type!.asString();
-      default:
-        return 'File';
-    }
+    // switch (packElement?.runtimeType) {
+    //   case PackImage:
+    //     return 'Image';
+    //   case PackElement:
+    //     return (packElement as PackElement).type.asString();
+    //   default:
+    //     return 'File';
+    // }
+    return 'Fix me!';
   }
 
   _buildImageDiff(String filename) {

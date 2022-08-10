@@ -10,7 +10,7 @@ ManifestModule _$ManifestModuleFromJson(Map<String, dynamic> json) =>
     ManifestModule(
       type: $enumDecode(_$ModuleTypeEnumMap, json['type']),
       uuid: json['uuid'] as String,
-      version: Version.fromJson(json['version'] as List),
+      version: Version.fromJson(json['version']),
     );
 
 Map<String, dynamic> _$ManifestModuleToJson(ManifestModule instance) =>

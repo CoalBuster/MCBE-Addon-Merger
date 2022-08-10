@@ -1,7 +1,7 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../model/manifest.dart';
-import '../model/pack_content.dart';
 import '../model/pack_element.dart';
 import '../model/patch.dart';
 import '../repository/addon_repository.dart';
@@ -9,9 +9,10 @@ import '../repository/addon_repository.dart';
 class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
 
+  List<PackElementInfo>? _elements;
   bool _loading = false;
   Manifest? _pack;
-  PackContent? _packContent;
+  // PackContent? _packContent;
   String? _packElementName;
   String? _packElementPath;
   List<Patch>? _patches;
@@ -20,20 +21,20 @@ class PackController with ChangeNotifier {
     required this.addonRepository,
   });
 
+  List<PackElementInfo>? get elements => _elements;
   bool get loading => _loading;
   Manifest? get pack => _pack;
-  PackContent? get packContent => _packContent;
+  // PackContent? get packContent => _packContent;
   List<Patch>? get patches => _patches;
-  PackElement? get selectedElement => _packElementPath == null
-      ? null
-      : _packContent?.element(_packElementPath!);
+  PackElementInfo? get selectedElement =>
+      _elements?.singleWhereOrNull((e) => e.path == _packElementPath);
   String? get selectedElementName => _packElementName;
   String? get selectedElementPath => _packElementPath;
 
-  set packContent(PackContent? packContent) {
-    _packContent = packContent;
-    notifyListeners();
-  }
+  // set packContent(PackContent? packContent) {
+  //   _packContent = packContent;
+  //   notifyListeners();
+  // }
 
   set patches(List<Patch>? patches) {
     _patches = patches;
@@ -42,7 +43,7 @@ class PackController with ChangeNotifier {
 
   void clear() {
     _pack = null;
-    _packContent = null;
+    // _packContent = null;
     _packElementName = null;
     _packElementPath = null;
     notifyListeners();
@@ -54,29 +55,30 @@ class PackController with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> loadPackAsync(List<int>? data) async {
+  // Future<bool> loadPackAsync(List<int>? data) async {
+  Future<bool> loadPackAsync(Manifest pack) async {
     clear();
     _loading = true;
     notifyListeners();
 
-    if (data == null) {
-      _loading = false;
-      notifyListeners();
-      return false;
-    }
+    // if (data == null) {
+    //   _loading = false;
+    //   notifyListeners();
+    //   return false;
+    // }
 
-    await addonRepository.uploadPack(data);
-    var packs = await addonRepository.listPacksAsync();
+    // await addonRepository.uploadPack(data);
+    // var packs = await addonRepository.listPacksAsync();
 
-    if (packs.length != 1) {
-      _loading = false;
-      notifyListeners();
-      return false;
-    }
+    // if (packs.length != 1) {
+    //   _loading = false;
+    //   notifyListeners();
+    //   return false;
+    // }
 
-    _pack = packs.single;
-    _packContent =
-        await addonRepository.listElementsByPackId(packs.single.header.uuid);
+    // _pack = packs.single;
+    _pack = pack;
+    _elements = await addonRepository.listElementsByPackId(pack.header.uuid);
     _loading = false;
     notifyListeners();
     return true;
@@ -94,10 +96,10 @@ class PackController with ChangeNotifier {
     notifyListeners();
 
     _pack = pack;
-    _packContent = await addonRepository.listElementsByPackId(pack.header.uuid);
+    _elements = await addonRepository.listElementsByPackId(pack.header.uuid);
 
     _loading = false;
     notifyListeners();
-    return _packContent != null;
+    return _elements != null;
   }
 }

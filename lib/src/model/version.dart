@@ -9,7 +9,7 @@ class Version {
     this.patch,
   });
 
-  static Version fromJson(List<dynamic> version) => Version(
+  static Version fromJson(dynamic version) => Version(
         major: version[0],
         minor: version[1],
         patch: version[2],
@@ -38,4 +38,16 @@ class Version {
 
   @override
   String toString() => '$major.$minor${patch == null ? '' : '.$patch'}';
+
+  static Version? tryFromJson(dynamic version) {
+    if (version is! List<dynamic>) {
+      return null;
+    }
+
+    return Version(
+      major: version[0],
+      minor: version[1],
+      patch: version[2],
+    );
+  }
 }

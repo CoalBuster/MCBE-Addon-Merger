@@ -21,8 +21,7 @@ class ItemDetailView extends StatelessWidget {
       restorationId: 'itemListView',
       children: [
         ListTile(
-          title: Text(item.description.identifier),
-          subtitle: formatVersion == null
+          title: formatVersion == null
               ? null
               : Text('Format Version: $formatVersion' +
                   (item.description.category == null

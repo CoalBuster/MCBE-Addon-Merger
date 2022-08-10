@@ -72,7 +72,7 @@ class AddonMergerApp extends StatelessWidget {
                   addonController: addonController,
                   addonPicker: addonPicker,
                   logger: logger,
-                  mergeController: mergeController,
+                  // mergeController: mergeController,
                   packController: packController,
                 ),
             PackDetailLayout.routeName: (context) => PackDetailLayout(

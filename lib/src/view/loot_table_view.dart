@@ -5,11 +5,11 @@ import '../model/loot_table.dart';
 import '../model/version.dart';
 
 class LootTableDetailView extends StatelessWidget {
-  final List<LootTable> pools;
+  final LootTables lootTables;
   final Version? formatVersion;
 
   const LootTableDetailView({
-    required this.pools,
+    required this.lootTables,
     this.formatVersion,
     Key? key,
   }) : super(key: key);
@@ -22,8 +22,8 @@ class LootTableDetailView extends StatelessWidget {
         ExpansionTile(
           initiallyExpanded: true,
           title: const Text('Pools'),
-          subtitle: Text('${pools.length} pool(s)'),
-          children: pools
+          subtitle: Text('${lootTables.pools.length} pool(s)'),
+          children: lootTables.pools
               .map((e) => e.isEmpty
                   ? const ListTile(
                       title: Text('Empty Pool'),

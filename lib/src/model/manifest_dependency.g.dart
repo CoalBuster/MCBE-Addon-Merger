@@ -9,7 +9,7 @@ part of 'manifest_dependency.dart';
 ManifestDependency _$ManifestDependencyFromJson(Map<String, dynamic> json) =>
     ManifestDependency(
       uuid: json['uuid'] as String,
-      version: Version.fromJson(json['version'] as List),
+      version: Version.fromJson(json['version']),
     );
 
 Map<String, dynamic> _$ManifestDependencyToJson(ManifestDependency instance) =>

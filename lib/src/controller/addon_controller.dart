@@ -14,6 +14,7 @@ class AddonController with ChangeNotifier {
 
   bool _loading = false;
   List<Manifest> _packs = [];
+  List<Manifest> _selected = [];
 
   AddonController({
     required this.addonPicker,
@@ -23,9 +24,18 @@ class AddonController with ChangeNotifier {
 
   bool get loading => _loading;
   List<Manifest> get packs => UnmodifiableListView(_packs);
+  List<Manifest> get selected => UnmodifiableListView(_selected);
+
+  void clear() {
+    _packs.clear();
+    notifyListeners();
+  }
 
   Future<bool> loadAddonAsync(List<int>? data) async {
-    _packs.clear();
+    if (loading) {
+      return false;
+    }
+
     _loading = true;
     notifyListeners();
 
@@ -36,6 +46,27 @@ class AddonController with ChangeNotifier {
     }
 
     await addonRepository.uploadAddon(data);
+    _packs = await addonRepository.listPacksAsync();
+    _loading = false;
+    notifyListeners();
+    return true;
+  }
+
+  Future<bool> loadPackAsync(List<int>? data) async {
+    if (loading) {
+      return false;
+    }
+
+    _loading = true;
+    notifyListeners();
+
+    if (data == null) {
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+
+    await addonRepository.uploadPack(data);
     _packs = await addonRepository.listPacksAsync();
     _loading = false;
     notifyListeners();

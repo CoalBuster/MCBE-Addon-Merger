@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../model/component.dart';
+import '../model/pack_element.dart';
 import '../model/patch.dart';
 import '../model/server_entity.dart';
 import '../model/version.dart';
@@ -28,9 +29,8 @@ class EntityDetailView extends StatelessWidget {
       restorationId: 'entityListView',
       controller: scrollController,
       children: [
-        PatchedTile(
-          title: entity.description.identifier,
-          subtitle: formatVersion == null
+        ListTile(
+          title: formatVersion == null
               ? null
               : Row(
                   children: [

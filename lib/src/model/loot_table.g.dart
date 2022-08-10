@@ -6,6 +6,17 @@ part of 'loot_table.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+LootTables _$LootTablesFromJson(Map<String, dynamic> json) => LootTables(
+      pools: (json['pools'] as List<dynamic>)
+          .map((e) => LootTable.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$LootTablesToJson(LootTables instance) =>
+    <String, dynamic>{
+      'pools': instance.pools,
+    };
+
 LootTable _$LootTableFromJson(Map<String, dynamic> json) => LootTable(
       entries: (json['entries'] as List<dynamic>?)
           ?.map((e) => LootPoolEntry.fromJson(e as Map<String, dynamic>))

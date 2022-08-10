@@ -16,7 +16,7 @@ class PackElementLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final element = packController.selectedElement;
-    final name = packController.selectedElementName;
+    final name = packController.selectedElementName ?? element?.name;
     final path = packController.selectedElementPath;
     final patches = packController.patches;
 
@@ -25,8 +25,8 @@ class PackElementLayout extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(element?.type?.asString() ?? 'Pack Element Details'),
-            if (path != null)
+            Text(name ?? path ?? 'Pack Element Details'),
+            if (name != null && path != null)
               Text(
                 path,
                 style: const TextStyle(fontSize: 14),
@@ -39,8 +39,10 @@ class PackElementLayout extends StatelessWidget {
               child: Text('No Element selected'),
             )
           : PackElementDetailView(
+              addonRepository: packController.addonRepository,
               element: element,
               name: name,
+              pack: packController.pack,
               patches: patches,
             ),
     );

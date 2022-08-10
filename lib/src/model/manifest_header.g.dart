@@ -9,10 +9,10 @@ part of 'manifest_header.dart';
 ManifestHeader _$ManifestHeaderFromJson(Map<String, dynamic> json) =>
     ManifestHeader(
       description: json['description'] as String,
-      minEngineVersion: Version.fromJson(json['min_engine_version'] as List),
+      minEngineVersion: Version.fromJson(json['min_engine_version']),
       name: json['name'] as String,
       uuid: json['uuid'] as String,
-      version: Version.fromJson(json['version'] as List),
+      version: Version.fromJson(json['version']),
     );
 
 Map<String, dynamic> _$ManifestHeaderToJson(ManifestHeader instance) =>

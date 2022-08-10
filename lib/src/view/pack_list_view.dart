@@ -1,29 +1,36 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mcbe_addon_merger/src/controller/addon_controller.dart';
 import 'package:path/path.dart' as path;
 
 import '../model/manifest.dart';
 
 class PackListView extends StatelessWidget {
+  final AddonController addonController;
   final Function(Manifest pack)? onPackTapped;
-  final List<Manifest> packs;
-  final List<Manifest> selected;
+  // final List<Manifest> packs;
+  // final List<Manifest> selected;
 
   const PackListView({
+    required this.addonController,
     Key? key,
     this.onPackTapped,
-    this.packs = const [],
-    this.selected = const [],
+    // this.packs = const [],
+    // this.selected = const [],
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (addonController.packs.isEmpty) {
+      return const Center(child: Text('No packs'));
+    }
+
     return ListView.builder(
       restorationId: 'packListView',
-      itemCount: packs.length,
+      itemCount: addonController.packs.length,
       itemBuilder: (BuildContext context, int index) {
-        final pack = packs[index];
+        final pack = addonController.packs[index];
 
         return ListTile(
           title: Text(pack.header.name),
@@ -33,7 +40,7 @@ class PackListView extends StatelessWidget {
               //   File(path.absolute(pack.directory.path, 'pack_icon.png')),
               // ),
               ),
-          selected: selected.contains(pack),
+          selected: addonController.selected.contains(pack),
           subtitle: Text('v${pack.header.version} | ' +
               (pack.isBehaviorPack
                   ? 'Behavior Pack'

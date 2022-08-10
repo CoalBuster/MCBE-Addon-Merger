@@ -1,9 +1,23 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'loot_condition.dart';
 import 'function.dart';
+import 'pack_element.dart';
 import 'range.dart';
 
 part 'loot_table.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class LootTables extends PackElement {
+  final List<LootTable> pools;
+
+  LootTables({required this.pools});
+
+  factory LootTables.fromJson(dynamic json) =>
+      _$LootTablesFromJson({'pools': json});
+
+  @override
+  Map<String, dynamic> toJson() => _$LootTablesToJson(this)['pools'];
+}
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class LootTable {

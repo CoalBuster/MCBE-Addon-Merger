@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import '../controller/pack_controller.dart';
-import '../model/pack_element_type.dart';
+import '../model/pack_element.dart';
 import '../view/manifest_view.dart';
 import '../sliver/pack_content_sliver.dart';
 import 'pack_element_layout.dart';
@@ -53,7 +53,7 @@ class PackDetailLayout extends StatelessWidget {
                 child: Divider(height: 1),
               ),
               PackContentSliver(
-                content: packController.packContent!,
+                content: packController.elements!,
                 moduleTypes: pack.moduleTypes,
                 onElementSelected: (type, path, [name]) =>
                     _onElementSelected(context, type, path, name),

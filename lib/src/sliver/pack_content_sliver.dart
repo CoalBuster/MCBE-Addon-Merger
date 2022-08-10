@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../model/module_type.dart';
-import '../model/pack_content.dart';
-import '../model/pack_element_type.dart';
+import '../model/pack_element.dart';
 import '../util/pluralizer.dart';
 
 class PackContentSliver extends StatelessWidget {
-  final PackContent content;
+  final List<PackElementInfo> content;
   final Iterable<ModuleType> moduleTypes;
   final Function(PackElementType type, String path, [String? name])?
       onElementSelected;
@@ -20,103 +19,107 @@ class PackContentSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final animControllers =
+        content.where((e) => e.type == PackElementType.animationControllers);
+    final entities = content.where((e) => e.type == PackElementType.entity);
+    final items = content.where((e) => e.type == PackElementType.item);
+    final lootTables =
+        content.where((e) => e.type == PackElementType.lootTable);
+    final unidentified =
+        content.where((e) => e.type == PackElementType.unknown);
+
     return SliverList(
       delegate: SliverChildListDelegate(
         [
-          if (content.animationControllers.isEmpty)
+          if (animControllers.isEmpty)
             const ListTile(
               title: Text('Animation Controllers'),
               subtitle: Text('None'),
               enabled: false,
             ),
-          if (content.animationControllers.isNotEmpty)
+          if (animControllers.isNotEmpty)
             ExpansionTile(
               title: const Text('Animation Controllers'),
-              subtitle: Text(
-                  '${content.animationControllers.entries.expand((e) => e.value.entries).length} controller(s)'),
-              children: content.animationControllers.entries
-                  .expand(
-                      (element) => element.value.entries.map((e) => ListTile(
-                            title: Text(e.key),
-                            subtitle: Text(element.key),
+              subtitle: Text(animControllers.length
+                  .pluralText('controller', 'controllers')),
+              children: animControllers
+                  .expand((e) => (e.name ?? e.path)
+                      .split(',')
+                      .map((n) => n.trim())
+                      .map((n) => ListTile(
+                            title: Text(n),
+                            subtitle: Text(e.path),
                             onTap: () => onElementSelected?.call(
-                                PackElementType.animationController,
-                                element.key,
-                                e.key),
+                                PackElementType.animationControllers,
+                                e.path,
+                                n),
                           )))
                   .toList(),
             ),
-          if (moduleTypes.contains(ModuleType.data) && content.entities.isEmpty)
+          if (moduleTypes.contains(ModuleType.data) && entities.isEmpty)
             const ListTile(
               title: Text('Entities'),
               subtitle: Text('None'),
               enabled: false,
             ),
-          if (moduleTypes.contains(ModuleType.data) &&
-              content.entities.isNotEmpty)
+          if (moduleTypes.contains(ModuleType.data) && entities.isNotEmpty)
             ExpansionTile(
               title: const Text('Enitities'),
-              subtitle: Text(content.entities.length
+              subtitle: Text(entities.length
                   .pluralText('entity', 'entities', '(server-side)')),
-              children: content.entities.entries
+              children: entities
                   .map((e) => ListTile(
-                        title: Text(e.value.description.identifier),
-                        subtitle: Text(e.key),
+                        title: Text(e.name ?? e.path),
+                        subtitle: Text(e.path),
                         onTap: () => onElementSelected?.call(
-                            PackElementType.entity, e.key),
+                            PackElementType.entity, e.path),
                       ))
                   .toList(),
             ),
-          if (moduleTypes.contains(ModuleType.data) && content.items.isEmpty)
+          if (moduleTypes.contains(ModuleType.data) && items.isEmpty)
             const ListTile(
               title: Text('Items'),
               subtitle: Text('None'),
               enabled: false,
             ),
-          if (moduleTypes.contains(ModuleType.data) && content.items.isNotEmpty)
+          if (moduleTypes.contains(ModuleType.data) && items.isNotEmpty)
             ExpansionTile(
               title: const Text('Items'),
-              subtitle: Text(content.items.length.pluralText('item', 'items')),
-              children: content.items.entries
+              subtitle: Text(items.length.pluralText('item', 'items')),
+              children: items
                   .map((e) => ListTile(
-                        title: Text(e.value.description.identifier),
-                        subtitle: Text(e.key),
+                        title: Text(e.name ?? e.path),
+                        subtitle: Text(e.path),
                         onTap: () => onElementSelected?.call(
-                            PackElementType.item, e.key),
+                            PackElementType.item, e.path),
                       ))
                   .toList(),
             ),
-          if (moduleTypes.contains(ModuleType.data) &&
-              content.lootTables.isEmpty)
+          if (moduleTypes.contains(ModuleType.data) && lootTables.isEmpty)
             const ListTile(
               title: Text('Loot Tables'),
               subtitle: Text('None'),
               enabled: false,
             ),
-          if (moduleTypes.contains(ModuleType.data) &&
-              content.lootTables.isNotEmpty)
+          if (moduleTypes.contains(ModuleType.data) && lootTables.isNotEmpty)
             ExpansionTile(
               title: const Text('Loot Tables'),
-              subtitle:
-                  Text(content.lootTables.length.pluralText('pool', 'pools')),
-              children: content.lootTables.entries
+              subtitle: Text(lootTables.length.pluralText('pool', 'pools')),
+              children: lootTables
                   .map((e) => ListTile(
-                        title: Text(e.key),
-                        subtitle:
-                            Text(e.value.length.pluralText('pool', 'pools')),
+                        title: Text(e.path),
                         onTap: () => onElementSelected?.call(
-                            PackElementType.item, e.key),
+                            PackElementType.item, e.path),
                       ))
                   .toList(),
             ),
-          if (content.unidentified.isNotEmpty)
+          if (unidentified.isNotEmpty)
             ExpansionTile(
               title: const Text('Unidentified Files'),
-              subtitle:
-                  Text(content.unidentified.length.pluralText('file', 'files')),
-              children: content.unidentified
+              subtitle: Text(unidentified.length.pluralText('file', 'files')),
+              children: unidentified
                   .map((e) => ListTile(
-                        title: Text(e),
+                        title: Text(e.path),
                         dense: true,
                       ))
                   .toList(),

@@ -1,6 +1,21 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'pack_element.dart';
+
 part 'animation_controller.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationControllers extends PackElement {
+  final Map<String, AnimationController> controllers;
+
+  AnimationControllers({required this.controllers});
+
+  factory AnimationControllers.fromJson(dynamic json) =>
+      _$AnimationControllersFromJson({"controllers": json});
+
+  Map<String, dynamic> toJson() =>
+      _$AnimationControllersToJson(this)['controllers'];
+}
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AnimationController {

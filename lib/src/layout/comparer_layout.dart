@@ -34,7 +34,7 @@ class ComparerLayout extends AnimatedWidget {
   }
 
   void _onDiffSelected(BuildContext context, PackDifference difference) {
-    packController.packContent = mergeController.basePackContent;
+    // packController.packContent = mergeController.basePackContent;
     packController.patches = difference.patches;
     packController.selectElement(difference.filename);
     Navigator.restorablePushNamed(context, PackElementLayout.routeName);
