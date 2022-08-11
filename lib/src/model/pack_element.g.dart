@@ -39,8 +39,8 @@ Map<String, dynamic> _$AnimationControllerEntryToJson(
 AnimationControllerState _$AnimationControllerStateFromJson(
         Map<String, dynamic> json) =>
     AnimationControllerState(
-      transitions: (json['transitions'] as List<dynamic>)
-          .map((e) => Map<String, String>.from(e as Map))
+      transitions: (json['transitions'] as List<dynamic>?)
+          ?.map((e) => Map<String, String>.from(e as Map))
           .toList(),
     );
 

@@ -196,7 +196,7 @@ class AnimationControllerEntry {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AnimationControllerState {
-  final List<Map<String, String>> transitions;
+  final List<Map<String, String>>? transitions;
 
   AnimationControllerState({
     required this.transitions,
