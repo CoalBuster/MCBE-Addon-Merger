@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
-import '../model/loot_table.dart';
+import '../model/loot.dart';
+import '../model/pack_element.dart';
 import '../model/version.dart';
 
 class LootTableDetailView extends StatelessWidget {
-  final LootTables lootTables;
+  final LootPoolsElement lootTables;
   final Version? formatVersion;
 
   const LootTableDetailView({
@@ -60,7 +61,7 @@ class LootTableDetailView extends StatelessWidget {
 }
 
 class LootTablePoolEntryView extends StatelessWidget {
-  final LootPoolEntry entry;
+  final LootEntry entry;
   final LootTable parentPool;
 
   const LootTablePoolEntryView({

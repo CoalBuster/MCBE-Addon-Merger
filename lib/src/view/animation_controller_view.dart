@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import '../model/animation_controller.dart' as mc;
+
+import '../model/pack_element.dart';
 import '../model/version.dart';
 
 class AnimationControllerDetailView extends StatelessWidget {
-  final mc.AnimationControllers animationControllers;
+  final AnimationControllersElement animationControllers;
   final Version? formatVersion;
   final String? name;
 
@@ -28,7 +29,8 @@ class AnimationControllerDetailView extends StatelessWidget {
       restorationId: 'animationControllerListView',
       children: [
         ListTile(
-          title: formatVersion == null
+          title: const Text('Animation Controller'),
+          subtitle: formatVersion == null
               ? null
               : Text('Format Version: $formatVersion'),
         ),

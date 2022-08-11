@@ -27,3 +27,19 @@ Map<String, dynamic> _$IntegerRangeToJson(IntegerRange instance) =>
       'max': instance.max,
       'min': instance.min,
     };
+
+SingleOrList<T> _$SingleOrListFromJson<T>(
+  Map<String, dynamic> json,
+  T Function(Object? json) fromJsonT,
+) =>
+    SingleOrList<T>(
+      items: (json['items'] as List<dynamic>).map(fromJsonT).toList(),
+    );
+
+Map<String, dynamic> _$SingleOrListToJson<T>(
+  SingleOrList<T> instance,
+  Object? Function(T value) toJsonT,
+) =>
+    <String, dynamic>{
+      'items': instance.items.map(toJsonT).toList(),
+    };

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mcbe_addon_merger/src/model/pack_element.dart';
 
 part 'range.g.dart';
 
@@ -54,3 +55,52 @@ class IntegerRange {
 
   Map<String, dynamic> toJson() => _$IntegerRangeToJson(this);
 }
+
+// class SingleOrList<T> {
+//   final List<T> items;
+
+//   SingleOrList({
+//     required this.items,
+//   });
+
+//   factory SingleOrList.fromJson(dynamic json) =>
+//       SingleOrList<T>(items: json is List ? json.map((e) => T.fromJson()) : [json]);
+
+//   dynamic toJson() => items.length == 1 ? items.single : items;
+// }
+
+@JsonSerializable(
+    fieldRename: FieldRename.snake, genericArgumentFactories: true)
+class SingleOrList<T> {
+  final List<T> items;
+
+  SingleOrList({
+    required this.items,
+  });
+
+  factory SingleOrList.fromJson(
+          dynamic json, T Function(Object? json) fromJsonT) =>
+      _$SingleOrListFromJson({
+        'items': json is List ? json : [json],
+      }, fromJsonT);
+
+  dynamic toJson() => items.length == 1 ? items.single : items;
+}
+
+// class SingleOrList<T> implements JsonConverter<List<T>, dynamic> {
+//   final T Function(dynamic json) jsonFunction;
+
+//   const SingleOrList(this.jsonFunction);
+
+//   @override
+//   List<T> fromJson(dynamic json) {
+//     if (json is List) {
+//       return json.map((e) => jsonFunction(e)).toList();
+//     }
+
+//     return [jsonFunction(json)];
+//   }
+
+//   @override
+//   dynamic toJson(List<T> list) => list;
+// }

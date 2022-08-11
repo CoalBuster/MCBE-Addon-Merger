@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mcbe_addon_merger/src/model/server_entity.dart';
+import 'package:mcbe_addon_merger/src/view/animation_view.dart';
 
-import '../model/animation_controller.dart' as mc;
-import '../model/item.dart';
-import '../model/loot_table.dart';
 import '../model/manifest.dart';
 import '../model/pack_element.dart';
 import '../model/patch.dart';
@@ -12,6 +9,7 @@ import 'animation_controller_view.dart';
 import 'entity_view.dart';
 import 'item_view.dart';
 import 'loot_table_view.dart';
+import 'recipe_view.dart';
 
 class PackElementDetailView extends StatelessWidget {
   final AddonRepository addonRepository;
@@ -65,24 +63,40 @@ class PackElementDetailView extends StatelessWidget {
               case PackElementType.animationControllers:
                 return AnimationControllerDetailView(
                   animationControllers:
-                      snapshot.data as mc.AnimationControllers,
+                      snapshot.data as AnimationControllersElement,
+                  formatVersion: element!.formatVersion,
+                  name: name,
+                );
+              case PackElementType.animations:
+                return AnimationDetailView(
+                  animations: snapshot.data as AnimationsElement,
                   formatVersion: element!.formatVersion,
                   name: name,
                 );
               case PackElementType.entity:
                 return EntityDetailView(
-                  entity: snapshot.data as ServerEntity,
+                  entity: snapshot.data as ServerEntityElement,
                   formatVersion: element!.formatVersion,
                   patches: patches,
                 );
               case PackElementType.item:
                 return ItemDetailView(
-                  item: snapshot.data as Item,
+                  item: snapshot.data as ItemElement,
                   formatVersion: element!.formatVersion,
                 );
               case PackElementType.lootTable:
                 return LootTableDetailView(
-                  lootTables: snapshot.data as LootTables,
+                  lootTables: snapshot.data as LootPoolsElement,
+                  formatVersion: element!.formatVersion,
+                );
+              case PackElementType.recipeShaped:
+                return ShapedRecipeDetailView(
+                  recipe: snapshot.data as ShapedRecipeElement,
+                  formatVersion: element!.formatVersion,
+                );
+              case PackElementType.recipeShapeless:
+                return ShapelessRecipeDetailView(
+                  recipe: snapshot.data as ShapelessRecipeElement,
                   formatVersion: element!.formatVersion,
                 );
               default:

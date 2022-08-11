@@ -1,23 +1,31 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'animation_controller.dart';
-import 'item.dart';
-import 'loot_table.dart';
-import 'server_entity.dart';
+import 'component.dart';
+import 'loot.dart';
+import 'loot_condition.dart';
+import 'range.dart';
 import 'version.dart';
+import '../util/pluralizer.dart';
+
+part 'pack_element.g.dart';
 
 enum PackElementType {
   animationControllers,
+  animations,
   entity,
   image,
   item,
   lootTable,
+  recipeShaped,
+  recipeShapeless,
   unknown;
 
   String asString() {
     switch (this) {
       case PackElementType.animationControllers:
         return 'Animation Controller';
+      case PackElementType.animations:
+        return 'Animation';
       case PackElementType.entity:
         return 'Entity';
       case PackElementType.image:
@@ -26,6 +34,9 @@ enum PackElementType {
         return 'Item';
       case PackElementType.lootTable:
         return 'Loot Table';
+      case PackElementType.recipeShaped:
+      case PackElementType.recipeShapeless:
+        return 'Recipe';
       case PackElementType.unknown:
         return 'Unknown';
     }
@@ -34,6 +45,10 @@ enum PackElementType {
   static PackElementType? fromJson(Map<String, dynamic> json) {
     if (json['animation_controllers'] is Map<String, dynamic>) {
       return PackElementType.animationControllers;
+    }
+
+    if (json['animations'] is Map<String, dynamic>) {
+      return PackElementType.animations;
     }
 
     if (json['minecraft:entity'] is Map<String, dynamic>) {
@@ -48,6 +63,14 @@ enum PackElementType {
       return PackElementType.lootTable;
     }
 
+    if (json['minecraft:recipe_shaped'] is Map<String, dynamic>) {
+      return PackElementType.recipeShaped;
+    }
+
+    if (json['minecraft:recipe_shapeless'] is Map<String, dynamic>) {
+      return PackElementType.recipeShapeless;
+    }
+
     return null;
   }
 
@@ -55,12 +78,18 @@ enum PackElementType {
     switch (this) {
       case PackElementType.animationControllers:
         return 'animation_controllers';
+      case PackElementType.animations:
+        return 'animations';
       case PackElementType.entity:
         return 'minecraft:entity';
       case PackElementType.item:
         return 'minecraft:item';
       case PackElementType.lootTable:
         return 'pools';
+      case PackElementType.recipeShaped:
+        return 'minecraft:recipe_shaped';
+      case PackElementType.recipeShapeless:
+        return 'minecraft:recipe_shapeless';
       default:
         throw 'Non json';
     }
@@ -70,10 +99,16 @@ enum PackElementType {
     switch (this) {
       case PackElementType.animationControllers:
         return json['animation_controllers'].keys.join(', ');
+      case PackElementType.animations:
+        return json['animations'].keys.join(', ');
       case PackElementType.entity:
         return json['minecraft:entity']['description']['identifier'];
       case PackElementType.item:
         return json['minecraft:item']['description']['identifier'];
+      case PackElementType.recipeShaped:
+        return json['minecraft:recipe_shaped']['description']['identifier'];
+      case PackElementType.recipeShapeless:
+        return json['minecraft:recipe_shapeless']['description']['identifier'];
       default:
         return null;
     }
@@ -102,10 +137,13 @@ abstract class PackElement {
 
 class PackElements implements JsonConverter<PackElement, Map<String, dynamic>> {
   static const _elements = {
-    PackElementType.animationControllers: AnimationControllers.fromJson,
-    PackElementType.entity: ServerEntity.fromJson,
-    PackElementType.item: Item.fromJson,
-    PackElementType.lootTable: LootTables.fromJson,
+    PackElementType.animationControllers: AnimationControllersElement.fromJson,
+    PackElementType.animations: AnimationsElement.fromJson,
+    PackElementType.entity: ServerEntityElement.fromJson,
+    PackElementType.item: ItemElement.fromJson,
+    PackElementType.lootTable: LootPoolsElement.fromJson,
+    PackElementType.recipeShaped: ShapedRecipeElement.fromJson,
+    PackElementType.recipeShapeless: ShapelessRecipeElement.fromJson,
   };
 
   const PackElements();
@@ -114,7 +152,7 @@ class PackElements implements JsonConverter<PackElement, Map<String, dynamic>> {
   PackElement fromJson(Map<String, dynamic> json) {
     final type = PackElementType.fromJson(json);
     return _elements[type]?.call(json[type!.jsonKey()]) ??
-        PackElementUnknown(
+        UnknownElement(
           json: json,
         );
   }
@@ -123,15 +161,338 @@ class PackElements implements JsonConverter<PackElement, Map<String, dynamic>> {
   Map<String, dynamic> toJson(PackElement element) => element.toJson();
 }
 
-class PackElementUnknown extends PackElement {
+///
+/// PackElements
+///
+
+/// Collection of animation controllers
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationControllersElement extends PackElement {
+  final Map<String, AnimationControllerEntry> controllers;
+
+  AnimationControllersElement({required this.controllers});
+
+  factory AnimationControllersElement.fromJson(dynamic json) =>
+      _$AnimationControllersElementFromJson({"controllers": json});
+
+  @override
+  Map<String, dynamic> toJson() =>
+      _$AnimationControllersElementToJson(this)['controllers'];
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationControllerEntry {
+  final Map<String, AnimationControllerState> states;
+
+  AnimationControllerEntry({
+    required this.states,
+  });
+
+  factory AnimationControllerEntry.fromJson(Map<String, dynamic> json) =>
+      _$AnimationControllerEntryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnimationControllerEntryToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationControllerState {
+  final List<Map<String, String>> transitions;
+
+  AnimationControllerState({
+    required this.transitions,
+  });
+
+  factory AnimationControllerState.fromJson(Map<String, dynamic> json) =>
+      _$AnimationControllerStateFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnimationControllerStateToJson(this);
+}
+
+/// Collection of animations
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationsElement extends PackElement {
+  final Map<String, AnimationEntry> animations;
+
+  AnimationsElement({required this.animations});
+
+  factory AnimationsElement.fromJson(dynamic json) =>
+      _$AnimationsElementFromJson({'animations': json});
+
+  @override
+  Map<String, dynamic> toJson() =>
+      _$AnimationsElementToJson(this)['animations'];
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class AnimationEntry {
+  final double animationLength;
+  final bool loop;
+  // @SingleOrList<String>(_str)
+  final Map<String, SingleOrList<String>> timeline;
+
+  AnimationEntry({
+    required this.animationLength,
+    required this.loop,
+    required this.timeline,
+  });
+
+  factory AnimationEntry.fromJson(Map<String, dynamic> json) =>
+      _$AnimationEntryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AnimationEntryToJson(this);
+
+  static String _str(dynamic d) => d as String;
+}
+
+/// Item
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ItemElement extends PackElement {
+  @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
+  final Map<String, Component>? components;
+  final ItemDescription description;
+
+  ItemElement({
+    required this.components,
+    required this.description,
+  });
+
+  factory ItemElement.fromJson(dynamic json) => _$ItemElementFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ItemElementToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ItemDescription {
+  final String? category;
+  final String identifier;
+
+  ItemDescription({
+    required this.identifier,
+    this.category,
+  });
+
+  factory ItemDescription.fromJson(Map<String, dynamic> json) =>
+      _$ItemDescriptionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ItemDescriptionToJson(this);
+}
+
+/// Loot
+@JsonSerializable(fieldRename: FieldRename.snake)
+class LootPoolsElement extends PackElement {
+  final List<LootTable> pools;
+
+  LootPoolsElement({required this.pools});
+
+  factory LootPoolsElement.fromJson(dynamic json) =>
+      _$LootPoolsElementFromJson({'pools': json});
+
+  @override
+  Map<String, dynamic> toJson() => _$LootPoolsElementToJson(this)['pools'];
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class LootTable {
+  @LootConditions()
+  final List<LootCondition>? conditions;
+  final List<LootEntry>? entries;
+  final CountOrRange? rolls;
+  final LootTier? tiers;
+
+  LootTable({
+    this.entries,
+    this.conditions,
+    this.rolls,
+    this.tiers,
+  });
+
+  bool get isEmpty =>
+      entries == null || entries!.isEmpty || (rolls == null && tiers == null);
+
+  bool get isTiered => tiers != null;
+
+  int get totalWeight =>
+      entries
+          ?.map((e) => e.weight)
+          .reduce((value, element) => value + element) ??
+      0;
+
+  factory LootTable.fromJson(Map<String, dynamic> json) =>
+      _$LootTableFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LootTableToJson(this);
+}
+
+/// Server-side entity
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ServerEntityElement extends PackElement {
+  final Map<String, dynamic>? componentGroups;
+  @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
+  final Map<String, Component>? components;
+  final ServerEntityDescription description;
+
+  ServerEntityElement({
+    required this.componentGroups,
+    required this.components,
+    required this.description,
+  });
+
+  factory ServerEntityElement.fromJson(dynamic json) =>
+      _$ServerEntityElementFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ServerEntityElementToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ServerEntityDescription {
+  Map<String, String>? animations;
+  String identifier;
+  bool? isSpawnable;
+  bool? isSummonable;
+  bool? isExperimental;
+  ServerEntityScripts? scripts;
+
+  ServerEntityDescription({
+    required this.identifier,
+    this.animations,
+    this.isExperimental,
+    this.isSpawnable,
+    this.isSummonable,
+    this.scripts,
+  });
+
+  factory ServerEntityDescription.fromJson(Map<String, dynamic> json) =>
+      _$ServerEntityDescriptionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ServerEntityDescriptionToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ServerEntityScripts {
+  final List<String>? animate;
+
+  ServerEntityScripts({
+    this.animate,
+  });
+
+  factory ServerEntityScripts.fromJson(Map<String, dynamic> json) =>
+      _$ServerEntityScriptsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ServerEntityScriptsToJson(this);
+}
+
+/// Recipes
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ShapedRecipeElement extends PackElement {
+  final RecipeDescription description;
+  final String? group;
+  final Map<String, RecipeIngredient> key;
+  final List<String> pattern;
+  // @SingleOrList<RecipeResult>(RecipeResult.fromJson)
+  final SingleOrList<RecipeResult> result;
+  final List<String> tags;
+
+  ShapedRecipeElement({
+    required this.description,
+    required this.key,
+    required this.pattern,
+    required this.result,
+    required this.tags,
+    this.group,
+  });
+
+  factory ShapedRecipeElement.fromJson(dynamic json) =>
+      _$ShapedRecipeElementFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ShapedRecipeElementToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class ShapelessRecipeElement extends PackElement {
+  final RecipeDescription description;
+  final List<RecipeIngredient> ingredients;
+  final RecipeResult result;
+  final List<String> tags;
+
+  ShapelessRecipeElement({
+    required this.description,
+    required this.ingredients,
+    required this.result,
+    required this.tags,
+  });
+
+  factory ShapelessRecipeElement.fromJson(dynamic json) =>
+      _$ShapelessRecipeElementFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$ShapelessRecipeElementToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class RecipeDescription {
+  String identifier;
+
+  RecipeDescription({
+    required this.identifier,
+  });
+
+  factory RecipeDescription.fromJson(Map<String, dynamic> json) =>
+      _$RecipeDescriptionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeDescriptionToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class RecipeIngredient {
+  int? count;
+  int? data;
+  String item;
+
+  RecipeIngredient({
+    required this.item,
+    this.count,
+    this.data,
+  });
+
+  factory RecipeIngredient.fromJson(Map<String, dynamic> json) =>
+      _$RecipeIngredientFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeIngredientToJson(this);
+}
+
+@JsonSerializable(fieldRename: FieldRename.snake)
+class RecipeResult {
+  int count;
+  int? data;
+  String item;
+
+  RecipeResult({
+    required this.item,
+    this.count = 1,
+    this.data,
+  });
+
+  factory RecipeResult.fromJson(dynamic json) => _$RecipeResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeResultToJson(this);
+
+  @override
+  String toString() => '${count}x $item${data == null ? '' : ' (data: $data)'}';
+}
+
+/// Unknown element
+class UnknownElement extends PackElement {
   final Map<String, dynamic> json;
 
-  PackElementUnknown({
+  UnknownElement({
     required this.json,
   });
 
-  factory PackElementUnknown.fromJson(Map<String, dynamic> json) =>
-      PackElementUnknown(json: json);
+  factory UnknownElement.fromJson(Map<String, dynamic> json) =>
+      UnknownElement(json: json);
 
   @override
   Map<String, dynamic> toJson() => json;

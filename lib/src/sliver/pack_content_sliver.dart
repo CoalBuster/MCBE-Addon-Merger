@@ -19,12 +19,17 @@ class PackContentSliver extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animControllers =
-        content.where((e) => e.type == PackElementType.animationControllers);
+    final animControllers = _splitOnName(
+        content.where((e) => e.type == PackElementType.animationControllers));
+    final anims = _splitOnName(
+        content.where((e) => e.type == PackElementType.animations));
     final entities = content.where((e) => e.type == PackElementType.entity);
     final items = content.where((e) => e.type == PackElementType.item);
     final lootTables =
         content.where((e) => e.type == PackElementType.lootTable);
+    final recipes = content.where((e) =>
+        e.type == PackElementType.recipeShaped ||
+        e.type == PackElementType.recipeShapeless);
     final unidentified =
         content.where((e) => e.type == PackElementType.unknown);
 
@@ -43,17 +48,34 @@ class PackContentSliver extends StatelessWidget {
               subtitle: Text(animControllers.length
                   .pluralText('controller', 'controllers')),
               children: animControllers
-                  .expand((e) => (e.name ?? e.path)
-                      .split(',')
-                      .map((n) => n.trim())
-                      .map((n) => ListTile(
-                            title: Text(n),
-                            subtitle: Text(e.path),
-                            onTap: () => onElementSelected?.call(
-                                PackElementType.animationControllers,
-                                e.path,
-                                n),
-                          )))
+                  .map((e) => ListTile(
+                        title: Text(e.name ?? e.path),
+                        subtitle: Text(e.path),
+                        onTap: () => onElementSelected?.call(
+                            PackElementType.animationControllers,
+                            e.path,
+                            e.name),
+                      ))
+                  .toList(),
+            ),
+          if (anims.isEmpty)
+            const ListTile(
+              title: Text('Animations'),
+              subtitle: Text('None'),
+              enabled: false,
+            ),
+          if (anims.isNotEmpty)
+            ExpansionTile(
+              title: const Text('Animations'),
+              subtitle:
+                  Text(anims.length.pluralText('animation', 'animations')),
+              children: anims
+                  .map((e) => ListTile(
+                        title: Text(e.name ?? e.path),
+                        subtitle: Text(e.path),
+                        onTap: () => onElementSelected?.call(
+                            PackElementType.animations, e.path, e.name),
+                      ))
                   .toList(),
             ),
           if (moduleTypes.contains(ModuleType.data) && entities.isEmpty)
@@ -113,6 +135,24 @@ class PackContentSliver extends StatelessWidget {
                       ))
                   .toList(),
             ),
+          if (moduleTypes.contains(ModuleType.data) && recipes.isEmpty)
+            const ListTile(
+              title: Text('Recipes'),
+              subtitle: Text('None'),
+              enabled: false,
+            ),
+          if (moduleTypes.contains(ModuleType.data) && recipes.isNotEmpty)
+            ExpansionTile(
+              title: const Text('Recipes'),
+              subtitle: Text(recipes.length.pluralText('recipe', 'recipes')),
+              children: recipes
+                  .map((e) => ListTile(
+                        title: Text(e.name ?? e.path),
+                        subtitle: Text(e.path),
+                        onTap: () => onElementSelected?.call(e.type, e.path),
+                      ))
+                  .toList(),
+            ),
           if (unidentified.isNotEmpty)
             ExpansionTile(
               title: const Text('Unidentified Files'),
@@ -128,4 +168,13 @@ class PackContentSliver extends StatelessWidget {
       ),
     );
   }
+
+  Iterable<PackElementInfo> _splitOnName(Iterable<PackElementInfo> iterable) =>
+      iterable.expand(
+          (e) => (e.name ?? e.path).split(',').map((n) => PackElementInfo(
+                path: e.path,
+                type: e.type,
+                name: n.trim(),
+                formatVersion: e.formatVersion,
+              )));
 }

@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import '../model/component.dart';
 import '../model/pack_element.dart';
 import '../model/patch.dart';
-import '../model/server_entity.dart';
 import '../model/version.dart';
 import 'tile/interact_tile.dart';
 import 'tile/patched_tile.dart';
 
 class EntityDetailView extends StatelessWidget {
-  final ServerEntity entity;
+  final ServerEntityElement entity;
   final Version? formatVersion;
   final List<Patch>? patches;
   final ScrollController scrollController;
@@ -30,7 +29,8 @@ class EntityDetailView extends StatelessWidget {
       controller: scrollController,
       children: [
         ListTile(
-          title: formatVersion == null
+          title: const Text('Entity (server-side)'),
+          subtitle: formatVersion == null
               ? null
               : Row(
                   children: [

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../model/component.dart';
-import '../model/item.dart';
+import '../model/pack_element.dart';
 import '../model/version.dart';
 import 'tile/patched_tile.dart';
 
 class ItemDetailView extends StatelessWidget {
-  final Item item;
+  final ItemElement item;
   final Version? formatVersion;
 
   const ItemDetailView({
@@ -21,12 +21,17 @@ class ItemDetailView extends StatelessWidget {
       restorationId: 'itemListView',
       children: [
         ListTile(
-          title: formatVersion == null
+          title: const Text('Item'),
+          subtitle: formatVersion == null
               ? null
-              : Text('Format Version: $formatVersion' +
-                  (item.description.category == null
-                      ? ''
-                      : '\nCategory: ${item.description.category}')),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Format Version: $formatVersion'),
+                    if (item.description.category != null)
+                      Text('Category: ${item.description.category}'),
+                  ],
+                ),
         ),
         if (item.components?.isEmpty ?? true)
           const ListTile(

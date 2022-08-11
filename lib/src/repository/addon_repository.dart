@@ -50,7 +50,8 @@ class AddonRepository {
   Future<PackElement?> getElementByPathAsync(
       String packId, String elementPath) async {
     final entry = _entries.singleWhere((e) => e.manifest.header.uuid == packId);
-    final elementFullPath = paths.posix.join(entry.path, elementPath);
+    final elementFullPath =
+        paths.posix.normalize(paths.posix.join(entry.path, elementPath));
     final elementFile = entry.archive.findFile(elementFullPath);
 
     if (elementFile == null) {
