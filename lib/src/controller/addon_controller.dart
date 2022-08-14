@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -29,6 +30,10 @@ class AddonController with ChangeNotifier {
   void clear() {
     _packs.clear();
     notifyListeners();
+  }
+
+  Future<Uint8List?> getPackIconAsync(String packId) {
+    return addonRepository.getFileContentByPathAsync(packId, 'pack_icon.png');
   }
 
   Future<bool> loadAddonAsync(List<int>? data) async {

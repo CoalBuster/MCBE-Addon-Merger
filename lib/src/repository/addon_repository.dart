@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
 import 'package:collection/collection.dart';
@@ -60,6 +61,20 @@ class AddonRepository {
 
     final element = _tryParsePackElementAsync(elementFile);
     return element;
+  }
+
+  Future<Uint8List?> getFileContentByPathAsync(
+      String packId, String elementPath) async {
+    final entry = _entries.singleWhere((e) => e.manifest.header.uuid == packId);
+    final fileFullPath =
+        paths.posix.normalize(paths.posix.join(entry.path, elementPath));
+    final archivedFile = entry.archive.findFile(fileFullPath);
+
+    if (archivedFile == null) {
+      return null;
+    }
+
+    return Uint8List.fromList(archivedFile.content as List<int>);
   }
 
   Future<List<PackElementInfo>> listElementsByPackId(String packId) async {

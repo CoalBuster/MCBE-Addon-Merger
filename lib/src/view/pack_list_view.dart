@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mcbe_addon_merger/src/controller/addon_controller.dart';
@@ -34,12 +35,14 @@ class PackListView extends StatelessWidget {
 
         return ListTile(
           title: Text(pack.header.name),
-          leading: CircleAvatar(
-              // backgroundImage: MemoryImage(),
-              // backgroundImage: FileImage(
-              //   File(path.absolute(pack.directory.path, 'pack_icon.png')),
-              // ),
-              ),
+          leading: FutureBuilder<Uint8List?>(
+            future: addonController.getPackIconAsync(pack.header.uuid),
+            builder: (context, snapshot) => snapshot.hasData
+                ? CircleAvatar(
+                    backgroundImage: MemoryImage(snapshot.data!),
+                  )
+                : const CircleAvatar(),
+          ),
           selected: addonController.selected.contains(pack),
           subtitle: Text('v${pack.header.version} | ' +
               (pack.isBehaviorPack
