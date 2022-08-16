@@ -55,51 +55,22 @@ class PackController with ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<bool> loadPackAsync(List<int>? data) async {
-  Future<bool> loadPackAsync(Manifest pack) async {
+  Future<bool> loadPackByIdAsync(String packId) async {
     clear();
     _loading = true;
     notifyListeners();
 
-    // if (data == null) {
-    //   _loading = false;
-    //   notifyListeners();
-    //   return false;
-    // }
+    _pack = await addonRepository.getManifestByIdAsync(packId);
+    _elements = await addonRepository.listElementsByPackId(packId);
 
-    // await addonRepository.uploadPack(data);
-    // var packs = await addonRepository.listPacksAsync();
-
-    // if (packs.length != 1) {
-    //   _loading = false;
-    //   notifyListeners();
-    //   return false;
-    // }
-
-    // _pack = packs.single;
-    _pack = pack;
-    _elements = await addonRepository.listElementsByPackId(pack.header.uuid);
     _loading = false;
     notifyListeners();
-    return true;
+    return _elements != null;
   }
 
   void selectElement(String path, [String? name]) {
     _packElementPath = path;
     _packElementName = name;
     notifyListeners();
-  }
-
-  Future<bool> loadPackByIdAsync(Manifest pack) async {
-    clear();
-    _loading = true;
-    notifyListeners();
-
-    _pack = pack;
-    _elements = await addonRepository.listElementsByPackId(pack.header.uuid);
-
-    _loading = false;
-    notifyListeners();
-    return _elements != null;
   }
 }

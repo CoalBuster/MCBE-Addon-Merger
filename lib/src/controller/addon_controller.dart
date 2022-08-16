@@ -12,10 +12,10 @@ class AddonController with ChangeNotifier {
   final AddonPicker addonPicker;
   final AddonRepository addonRepository;
   final Logger logger;
+  final List<String> _selected = [];
 
   bool _loading = false;
   List<Manifest> _packs = [];
-  List<Manifest> _selected = [];
 
   AddonController({
     required this.addonPicker,
@@ -23,9 +23,10 @@ class AddonController with ChangeNotifier {
     required this.logger,
   });
 
+  bool get anySelected => _selected.isNotEmpty;
   bool get loading => _loading;
   List<Manifest> get packs => UnmodifiableListView(_packs);
-  List<Manifest> get selected => UnmodifiableListView(_selected);
+  List<String> get selectedIds => UnmodifiableListView(_selected);
 
   void clear() {
     _packs.clear();
@@ -35,6 +36,8 @@ class AddonController with ChangeNotifier {
   Future<Uint8List?> getPackIconAsync(String packId) {
     return addonRepository.getFileContentByPathAsync(packId, 'pack_icon.png');
   }
+
+  bool isSelected(String packId) => _selected.contains(packId);
 
   Future<bool> loadAddonAsync(List<int>? data) async {
     if (loading) {
@@ -76,5 +79,15 @@ class AddonController with ChangeNotifier {
     _loading = false;
     notifyListeners();
     return true;
+  }
+
+  void select(String packId) {
+    _selected.add(packId);
+    notifyListeners();
+  }
+
+  void unselect(String packId) {
+    _selected.remove(packId);
+    notifyListeners();
   }
 }

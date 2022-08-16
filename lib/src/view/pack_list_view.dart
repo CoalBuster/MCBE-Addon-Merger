@@ -23,34 +23,44 @@ class PackListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (addonController.packs.isEmpty) {
-      return const Center(child: Text('No packs'));
-    }
+    return AnimatedBuilder(
+      animation: addonController,
+      builder: (context, child) {
+        if (addonController.packs.isEmpty) {
+          return const Center(child: Text('No packs'));
+        }
 
-    return ListView.builder(
-      restorationId: 'packListView',
-      itemCount: addonController.packs.length,
-      itemBuilder: (BuildContext context, int index) {
-        final pack = addonController.packs[index];
+        return ListView.builder(
+          restorationId: 'packListView',
+          itemCount: addonController.packs.length,
+          itemBuilder: (BuildContext context, int index) {
+            final pack = addonController.packs[index];
 
-        return ListTile(
-          title: Text(pack.header.name),
-          leading: FutureBuilder<Uint8List?>(
-            future: addonController.getPackIconAsync(pack.header.uuid),
-            builder: (context, snapshot) => snapshot.hasData
-                ? CircleAvatar(
-                    backgroundImage: MemoryImage(snapshot.data!),
-                  )
-                : const CircleAvatar(),
-          ),
-          selected: addonController.selected.contains(pack),
-          subtitle: Text('v${pack.header.version} | ' +
-              (pack.isBehaviorPack
-                  ? 'Behavior Pack'
-                  : pack.isResourcePack
-                      ? 'Resource Pack'
-                      : 'Unknown Pack')),
-          onTap: () => onPackTapped?.call(pack),
+            return ListTile(
+              title: Text(pack.header.name),
+              leading: FutureBuilder<Uint8List?>(
+                future: addonController.getPackIconAsync(pack.header.uuid),
+                builder: (context, snapshot) => snapshot.hasData
+                    ? CircleAvatar(
+                        backgroundImage: MemoryImage(snapshot.data!),
+                      )
+                    : const CircleAvatar(),
+              ),
+              selected: addonController.isSelected(pack.header.uuid),
+              subtitle: Text('v${pack.header.version} | ' +
+                  (pack.isBehaviorPack
+                      ? 'Behavior Pack'
+                      : pack.isResourcePack
+                          ? 'Resource Pack'
+                          : 'Unknown Pack')),
+              onTap: () => addonController.anySelected
+                  ? addonController.isSelected(pack.header.uuid)
+                      ? addonController.unselect(pack.header.uuid)
+                      : addonController.select(pack.header.uuid)
+                  : onPackTapped?.call(pack),
+              onLongPress: () => addonController.select(pack.header.uuid),
+            );
+          },
         );
       },
     );

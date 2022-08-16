@@ -11,8 +11,8 @@ import '../controller/merge_controller.dart';
 import '../controller/pack_controller.dart';
 import '../repository/addon_picker.dart';
 import 'compare_selection_layout.dart';
+import 'comparer_layout.dart';
 import 'pack_detail_layout.dart';
-import 'addon_layout.dart';
 
 class MainLayout extends StatelessWidget {
   static const routeName = '/';
@@ -21,7 +21,7 @@ class MainLayout extends StatelessWidget {
   final AddonPicker addonPicker;
   // final AddonRepository addonRepository;
   final Logger logger;
-  // final MergeController mergeController;
+  final MergeController mergeController;
   final PackController packController;
 
   const MainLayout({
@@ -29,7 +29,7 @@ class MainLayout extends StatelessWidget {
     required this.addonPicker,
     // required this.addonRepository,
     required this.logger,
-    // required this.mergeController,
+    required this.mergeController,
     required this.packController,
     Key? key,
   }) : super(key: key);
@@ -66,18 +66,33 @@ class MainLayout extends StatelessWidget {
           addonController: addonController,
           onPackTapped: (pack) => _explorePack(context, pack),
         ),
-        floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed:
-              addonController.loading ? null : () => _pickAndUpload(context),
-        ),
+        floatingActionButton: addonController.anySelected
+            ? FloatingActionButton(
+                child: const Icon(Icons.compare),
+                onPressed: addonController.loading
+                    ? null
+                    : () => _comparePacks(context),
+              )
+            : FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: addonController.loading
+                    ? null
+                    : () => _pickAndUpload(context),
+              ),
       ),
     );
   }
 
+  _comparePacks(BuildContext context) async {
+    await mergeController.loadBasePack(addonController.selectedIds[0]);
+    await mergeController.loadComparePack(addonController.selectedIds[1]);
+    mergeController.compare();
+    // Navigator.restorablePushNamed(context, ComparerLayout.routeName);
+  }
+
   _explorePack(BuildContext context, Manifest pack) async {
     Navigator.restorablePushNamed(context, PackDetailLayout.routeName);
-    packController.loadPackAsync(pack);
+    packController.loadPackByIdAsync(pack.header.uuid);
   }
 
   _pickAndUpload(BuildContext context) async {

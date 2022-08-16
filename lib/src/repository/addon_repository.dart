@@ -77,6 +77,11 @@ class AddonRepository {
     return Uint8List.fromList(archivedFile.content as List<int>);
   }
 
+  Future<Manifest?> getManifestByIdAsync(String packId) async {
+    final entry = _entries.singleWhere((e) => e.manifest.header.uuid == packId);
+    return entry.manifest;
+  }
+
   Future<List<PackElementInfo>> listElementsByPackId(String packId) async {
     final entry =
         _entries.singleWhereOrNull((e) => e.manifest.header.uuid == packId);

@@ -11,7 +11,6 @@ import 'layout/comparer_layout.dart';
 import 'layout/main_layout.dart';
 import 'layout/pack_detail_layout.dart';
 import 'layout/pack_element_layout.dart';
-import 'layout/addon_layout.dart';
 import 'repository/addon_picker.dart';
 import 'settings/settings_controller.dart';
 
@@ -55,10 +54,6 @@ class AddonMergerApp extends StatelessWidget {
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
           routes: {
-            AddonLayout.routeName: (context) => AddonLayout(
-                  addonController: addonController,
-                  packController: packController,
-                ),
             ComparerLayout.routeName: (context) => ComparerLayout(
                   mergeController: mergeController,
                   packController: packController,
@@ -72,7 +67,7 @@ class AddonMergerApp extends StatelessWidget {
                   addonController: addonController,
                   addonPicker: addonPicker,
                   logger: logger,
-                  // mergeController: mergeController,
+                  mergeController: mergeController,
                   packController: packController,
                 ),
             PackDetailLayout.routeName: (context) => PackDetailLayout(

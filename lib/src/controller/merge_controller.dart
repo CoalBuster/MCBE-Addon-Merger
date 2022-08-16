@@ -54,7 +54,7 @@ class MergeController with ChangeNotifier {
     notifyListeners();
   }
 
-  List<PackDifference>? compare() {
+  Future<List<PackDifference>?> compare() async {
     _diff.clear();
     notifyListeners();
 
@@ -63,59 +63,122 @@ class MergeController with ChangeNotifier {
     }
 
     List<PackDifference> result = [];
-    // for (var baseEntry in _basePackController.elements!) {
-    //   final diff = _compareEntry(baseEntry.key, baseEntry.value);
+    for (var baseEntry in _basePackController.elements!) {
+      final diff = await _compareEntryAsync(baseEntry);
 
-    //   if (diff != null) {
-    //     result.add(diff);
-    //   }
-    // }
+      if (diff != null) {
+        result.add(diff);
+      }
+    }
 
     _diff = result;
     notifyListeners();
     return result;
   }
 
-  // PackDifference? _compareEntry(String filename, dynamic base) {
-  //   if (base is PackElement) {
-  //     switch (base.type) {
-  //       case PackElementType.entity:
-  //         return _compareEntity(filename, base);
-  //       default:
-  //         return _compareFile(filename);
-  //     }
-  //   }
+  Future<PackDifference?> _compareEntryAsync(PackElementInfo baseEntry) async {
+    switch (baseEntry.type) {
+      case PackElementType.animationControllers:
+      case PackElementType.animations:
+      case PackElementType.entity:
+      case PackElementType.item:
+      case PackElementType.recipeShaped:
+      case PackElementType.recipeShapeless:
+        return _compareJsonAsync(
+            baseEntry, await _getComparingByName(baseEntry));
+      case PackElementType.lootTable:
+        return _compareJsonAsync(
+            baseEntry, await _getComparingByPath(baseEntry));
+      case PackElementType.image:
+      case PackElementType.unknown:
+        return null;
+    }
+  }
 
-  //   switch (base?.runtimeType) {
-  //     case PackImage:
-  //       return _compareImage(base);
-  //     default:
-  //       return _compareFile(filename);
-  //   }
+  Future<PackDifference?> _compareJsonAsync(
+      PackElementInfo baseEntry, PackElementInfo? compareEntry) async {
+    if (compareEntry == null) {
+      logger.d('[$baseEntry] REMOVED');
+      return null;
+    }
+
+    final baseElement = await addonRepository.getElementByPathAsync(
+        basePack!.header.uuid, baseEntry.path);
+    final compareElement = await addonRepository.getElementByPathAsync(
+        comparePack!.header.uuid, compareEntry.path);
+
+    if (baseElement == null || compareElement == null) {
+      logger.e(
+          'Failed to fetch either base or comparing element (${baseEntry.path})');
+      return null;
+    }
+
+    final baseJson = jsonEncode(baseElement);
+    final compJson = jsonEncode(compareElement);
+    final diff = JsonPatch.diff(jsonDecode(baseJson), jsonDecode(compJson))
+        .map((e) => Patch.fromJson(e))
+        .toList();
+
+    if (diff.isEmpty) {
+      logger
+          .d('[${baseEntry.type.asString()}][id=${baseEntry.name}] UNCHANGED');
+    } else {
+      logger.d('[${baseEntry.type.asString()}][id=${baseEntry.name}] CHANGED'
+          ' (${diff.length} change(s)):\n  ${diff.join('\n  ')}');
+    }
+
+    return null;
+    // return PackDifference(
+    //   filename: filename,
+    //   packElement: baseEntity,
+    //   patches: diff,
+    // );
+  }
+
+  Future<PackElementInfo?> _getComparingByName(
+      PackElementInfo baseEntry) async {
+    if (baseEntry.name == null) {
+      logger.w('Expected element with path ${baseEntry.path} to have a name');
+      return null;
+    }
+
+    final compareEntry = _comparePackController.elements!
+        .singleWhereOrNull((e) => e.name == baseEntry.name);
+    return compareEntry;
+  }
+
+  Future<PackElementInfo?> _getComparingByPath(
+      PackElementInfo baseEntry) async {
+    final compareEntry = _comparePackController.elements!
+        .singleWhereOrNull((e) => e.path == baseEntry.path);
+    return compareEntry;
+  }
+
+  // final baseEntity = await addonRepository.getElementByPathAsync(
+  //     basePack!.header.uuid, baseEntry.path);
+  // final compareEntity = await addonRepository.getElementByPathAsync(
+  //     comparePack!.header.uuid, baseEntry.path);
+  // // final compareEntity = _comparePackController.elements
+  // //     ?.firstWhereOrNull((file) =>
+  // //         file.value.entity?.description.identifier ==
+  // //         baseEntity.entity!.description.identifier)
+  // //     ?.value;
+
+  // if (compareEntity == null) {
+  //   return null;
   // }
 
-  // PackDifference? _compareEntity(String filename, PackElement baseEntity) {
-  //   final compareEntity = _comparePackController.elements
-  //       ?.firstWhereOrNull((file) =>
-  //           file.value.entity?.description.identifier ==
-  //           baseEntity.entity!.description.identifier)
-  //       ?.value;
-
-  //   if (compareEntity == null) {
-  //     return null;
-  //   }
-
-  //   final baseJson = jsonEncode(baseEntity);
-  //   final compJson = jsonEncode(compareEntity);
-  //   final diff = JsonPatch.diff(jsonDecode(baseJson), jsonDecode(compJson))
-  //       .map((e) => Patch.fromJson(e))
-  //       .toList();
-  //   logger.i('[ENTITY] [$filename] DIFF:\n  ${diff.join('\n  ')}');
-  //   return PackDifference(
-  //     filename: filename,
-  //     packElement: baseEntity,
-  //     patches: diff,
-  //   );
+  // final baseJson = jsonEncode(baseEntity);
+  // final compJson = jsonEncode(compareEntity);
+  // final diff = JsonPatch.diff(jsonDecode(baseJson), jsonDecode(compJson))
+  //     .map((e) => Patch.fromJson(e))
+  //     .toList();
+  // logger.i('[ENTITY] [$filename] DIFF:\n  ${diff.join('\n  ')}');
+  // return PackDifference(
+  //   filename: filename,
+  //   packElement: baseEntity,
+  //   patches: diff,
+  // );
   // }
 
   // PackDifference? _compareFile(String filename) {
@@ -148,16 +211,16 @@ class MergeController with ChangeNotifier {
   //   );
   // }
 
-  // Future<bool> loadBasePack(Pack? basePack) =>
-  //     _basePackController.loadAsync(basePack);
+  Future<bool> loadBasePack(String basePackId) =>
+      _basePackController.loadPackByIdAsync(basePackId);
 
   // Future<bool> loadBasePackByPathAsync(String basePackPath) async {
   //   final basePack = await addonRepository.fetchPackByPath(basePackPath);
   //   return _basePackController.loadAsync(basePack);
   // }
 
-  // Future<bool> loadComparePack(Pack? comparePack) =>
-  //     _comparePackController.loadAsync(comparePack);
+  Future<bool> loadComparePack(String comparePackId) =>
+      _comparePackController.loadPackByIdAsync(comparePackId);
 
   // Future<bool> loadComparePackByPathAsync(String comparePackPath) async {
   //   final comparePack = await addonRepository.fetchPackByPath(comparePackPath);
