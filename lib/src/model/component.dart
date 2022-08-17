@@ -17,6 +17,8 @@ class ComponentParam<T> {
 
 abstract class Component {
   List<ComponentParam> get parameters;
+  String? get name;
+  String? get summary;
 
   dynamic toJson();
 }
@@ -27,6 +29,8 @@ class Components {
     'minecraft:interact': InteractComponent.fromJson,
     'minecraft:seed': SeedComponent.fromJson,
   };
+
+  const Components();
 
   static Map<String, Component>? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
@@ -74,6 +78,12 @@ class FoodComponent implements Component {
   });
 
   @override
+  get name => 'Food';
+
+  @override
+  get summary => null;
+
+  @override
   get parameters => [
         ComponentParam('Effects', effects),
         ComponentParam('Nutrition', nutrition),
@@ -99,9 +109,18 @@ class InteractComponent implements Component {
   });
 
   @override
-  get parameters => [
-        ComponentParam('Interactions', interactions),
-      ];
+  get name => 'Interactable';
+
+  @override
+  get summary => '${interactions.length} interaction(s)';
+
+  @override
+  get parameters => interactions
+      .map((e) => ComponentParam(e.interactText ?? 'Interaction', e))
+      .toList();
+  // [
+  //       ComponentParam('Interactions', interactions),
+  //     ];
 
   factory InteractComponent.fromJson(Map<String, dynamic> json) {
     if (json['interactions'] is Map<String, dynamic>) {
@@ -136,6 +155,13 @@ class Interaction {
       _$InteractionFromJson(json);
 
   Map<String, dynamic> toJson() => _$InteractionToJson(this);
+
+  @override
+  String toString() =>
+      'Condition: ${onInteract.filters}' +
+      (onInteract.event == null
+          ? ''
+          : '\nEvent: ${onInteract.event} on ${onInteract.target ?? 'self'}');
 }
 
 /// Item that can be planted
@@ -148,6 +174,12 @@ class SeedComponent implements Component {
     required this.cropResult,
     required this.plantAt,
   });
+
+  @override
+  get name => 'Seed';
+
+  @override
+  get summary => toString();
 
   @override
   get parameters => [
@@ -180,8 +212,18 @@ class UnknownComponent extends Component {
   });
 
   @override
-  get parameters =>
-      json.entries.map((e) => ComponentParam(e.key, e.value)).toList();
+  get name => null;
+
+  @override
+  get summary => null;
+
+  @override
+  get parameters => json is Map<String, dynamic>
+      ? (json as Map<String, dynamic>)
+          .entries
+          .map((e) => ComponentParam(e.key, e.value))
+          .toList()
+      : [];
 
   factory UnknownComponent.fromJson(dynamic json) =>
       _$UnknownComponentFromJson({'json': json});

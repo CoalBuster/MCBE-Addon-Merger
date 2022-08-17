@@ -142,7 +142,9 @@ Map<String, dynamic> _$LootTableToJson(LootTable instance) => <String, dynamic>{
 
 ServerEntityElement _$ServerEntityElementFromJson(Map<String, dynamic> json) =>
     ServerEntityElement(
-      componentGroups: json['component_groups'] as Map<String, dynamic>?,
+      componentGroups: (json['component_groups'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as Map<String, dynamic>),
+      ),
       components:
           Components.fromJson(json['components'] as Map<String, dynamic>?),
       description: ServerEntityDescription.fromJson(

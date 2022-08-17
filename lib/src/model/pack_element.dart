@@ -379,7 +379,7 @@ class LootTable {
 /// Server-side entity
 @JsonSerializable(fieldRename: FieldRename.snake)
 class ServerEntityElement extends PackElement {
-  final Map<String, dynamic>? componentGroups;
+  final Map<String, Map<String, dynamic>>? componentGroups;
   @JsonKey(fromJson: Components.fromJson, toJson: Components.toJson)
   final Map<String, Component>? components;
   final ServerEntityDescription description;
@@ -390,6 +390,9 @@ class ServerEntityElement extends PackElement {
     required this.description,
     // required super.type,
   });
+
+  Map<String, Map<String, Component>?>? get groups => componentGroups
+      ?.map((key, value) => MapEntry(key, Components.fromJson(value)));
 
   @override
   String get type => 'minecraft:entity';
