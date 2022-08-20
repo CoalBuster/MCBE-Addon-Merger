@@ -12,10 +12,11 @@ class AddonController with ChangeNotifier {
   final AddonPicker addonPicker;
   final AddonRepository addonRepository;
   final Logger logger;
-  final List<String> _selected = [];
 
   bool _loading = false;
+  bool _multiSelect = false;
   List<Manifest> _packs = [];
+  final List<String> _selected = [];
 
   AddonController({
     required this.addonPicker,
@@ -25,6 +26,7 @@ class AddonController with ChangeNotifier {
 
   bool get anySelected => _selected.isNotEmpty;
   bool get loading => _loading;
+  bool get multiSelectMode => _multiSelect;
   List<Manifest> get packs => UnmodifiableListView(_packs);
   List<String> get selectedIds => UnmodifiableListView(_selected);
 
@@ -81,13 +83,25 @@ class AddonController with ChangeNotifier {
     return true;
   }
 
-  void select(String packId) {
+  void select(String packId, [bool? multi]) {
+    if (!_multiSelect) {
+      _selected.clear();
+    }
+
+    _multiSelect = multi ?? _multiSelect;
     _selected.add(packId);
     notifyListeners();
   }
 
   void unselect(String packId) {
     _selected.remove(packId);
+    _multiSelect = _multiSelect && _selected.isNotEmpty;
+    notifyListeners();
+  }
+
+  void unselectAll() {
+    _selected.clear();
+    _multiSelect = false;
     notifyListeners();
   }
 }

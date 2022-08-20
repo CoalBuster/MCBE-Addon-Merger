@@ -4,7 +4,6 @@ import '../model/component.dart';
 import '../model/pack_element.dart';
 import '../model/patch.dart';
 import '../model/version.dart';
-import 'tile/interact_tile.dart';
 import 'tile/patched_tile.dart';
 
 class EntityDetailView extends StatefulWidget {
@@ -34,6 +33,10 @@ class _EntityDetailViewState extends State<EntityDetailView> {
     final entity = widget.entity;
     final components = entity.components;
     final groupComponents = entity.groups?[_selectedGroup];
+
+    if (groupComponents == null) {
+      _selectedGroup = null;
+    }
 
     return ListView(
         restorationId: 'entityListView',

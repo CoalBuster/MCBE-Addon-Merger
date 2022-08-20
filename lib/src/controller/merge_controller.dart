@@ -35,9 +35,9 @@ class MergeController with ChangeNotifier {
     _comparePackController.addListener(notifyListeners);
   }
 
-  Manifest? get basePack => _basePackController.pack;
+  String? get basePackId => _basePackController.id;
   List<PackElementInfo>? get basePackContent => _basePackController.elements;
-  Manifest? get comparePack => _comparePackController.pack;
+  String? get comparePackId => _comparePackController.id;
   List<PackElementInfo>? get comparePackContent =>
       _comparePackController.elements;
   List<PackDifference> get diff => UnmodifiableListView(_diff);
@@ -103,9 +103,9 @@ class MergeController with ChangeNotifier {
     }
 
     final baseElement = await addonRepository.getElementByPathAsync(
-        basePack!.header.uuid, baseEntry.path);
+        basePackId!, baseEntry.path);
     final compareElement = await addonRepository.getElementByPathAsync(
-        comparePack!.header.uuid, compareEntry.path);
+        comparePackId!, compareEntry.path);
 
     if (baseElement == null || compareElement == null) {
       logger.e(

@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger/logger.dart';
 
+import 'controller/element_controller.dart';
 import 'controller/merge_controller.dart';
 import 'controller/pack_controller.dart';
 import 'controller/addon_controller.dart';
@@ -17,6 +18,7 @@ import 'settings/settings_controller.dart';
 class AddonMergerApp extends StatelessWidget {
   final AddonController addonController;
   final AddonPicker addonPicker;
+  final PackElementController elementController;
   final Logger logger;
   final MergeController mergeController;
   final PackController packController;
@@ -25,6 +27,7 @@ class AddonMergerApp extends StatelessWidget {
   const AddonMergerApp({
     required this.addonController,
     required this.addonPicker,
+    required this.elementController,
     required this.logger,
     required this.mergeController,
     required this.packController,
@@ -66,16 +69,18 @@ class AddonMergerApp extends StatelessWidget {
             MainLayout.routeName: (context) => MainLayout(
                   addonController: addonController,
                   addonPicker: addonPicker,
+                  elementController: elementController,
                   logger: logger,
                   mergeController: mergeController,
                   packController: packController,
                 ),
             PackDetailLayout.routeName: (context) => PackDetailLayout(
+                  elementController: elementController,
                   logger: logger,
                   packController: packController,
                 ),
             PackElementLayout.routeName: (context) => PackElementLayout(
-                  packController: packController,
+                  elementController: elementController,
                 ),
           },
           // onGenerateRoute: (RouteSettings routeSettings) {

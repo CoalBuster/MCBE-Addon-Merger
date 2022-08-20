@@ -53,12 +53,19 @@ class PackListView extends StatelessWidget {
                       : pack.isResourcePack
                           ? 'Resource Pack'
                           : 'Unknown Pack')),
-              onTap: () => addonController.anySelected
-                  ? addonController.isSelected(pack.header.uuid)
+              onTap: () {
+                if (addonController.multiSelectMode) {
+                  addonController.isSelected(pack.header.uuid)
                       ? addonController.unselect(pack.header.uuid)
-                      : addonController.select(pack.header.uuid)
-                  : onPackTapped?.call(pack),
-              onLongPress: () => addonController.select(pack.header.uuid),
+                      : addonController.select(pack.header.uuid);
+                } else {
+                  addonController.select(pack.header.uuid);
+                  onPackTapped?.call(pack);
+                }
+              },
+              onLongPress: () {
+                addonController.select(pack.header.uuid, true);
+              },
             );
           },
         );

@@ -3,55 +3,30 @@ import 'package:flutter/material.dart';
 
 import '../model/manifest.dart';
 import '../model/pack_element.dart';
-import '../model/patch.dart';
 import '../repository/addon_repository.dart';
 
 class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
 
-  List<PackElementInfo>? _elements;
+  final List<PackElementInfo> _elements = [];
   bool _loading = false;
-  Manifest? _pack;
-  // PackContent? _packContent;
-  String? _packElementName;
-  String? _packElementPath;
-  List<Patch>? _patches;
+  Manifest? _manifest;
+  final Set<PackElementInfo> _selected = {};
 
   PackController({
     required this.addonRepository,
   });
 
   List<PackElementInfo>? get elements => _elements;
+  String? get id => _manifest?.header.uuid;
   bool get loading => _loading;
-  Manifest? get pack => _pack;
-  // PackContent? get packContent => _packContent;
-  List<Patch>? get patches => _patches;
-  PackElementInfo? get selectedElement =>
-      _elements?.singleWhereOrNull((e) => e.path == _packElementPath);
-  String? get selectedElementName => _packElementName;
-  String? get selectedElementPath => _packElementPath;
-
-  // set packContent(PackContent? packContent) {
-  //   _packContent = packContent;
-  //   notifyListeners();
-  // }
-
-  set patches(List<Patch>? patches) {
-    _patches = patches;
-    notifyListeners();
-  }
+  Manifest? get manifest => _manifest;
+  PackElementInfo? get selectedElement => _elements.singleWhereOrNull(
+      (e) => _selected.any((s) => s.path == e.path && s.name == e.name));
 
   void clear() {
-    _pack = null;
-    // _packContent = null;
-    _packElementName = null;
-    _packElementPath = null;
-    notifyListeners();
-  }
-
-  void clearElement() {
-    _packElementName = null;
-    _packElementPath = null;
+    _elements.clear();
+    _manifest = null;
     notifyListeners();
   }
 
@@ -60,17 +35,21 @@ class PackController with ChangeNotifier {
     _loading = true;
     notifyListeners();
 
-    _pack = await addonRepository.getManifestByIdAsync(packId);
-    _elements = await addonRepository.listElementsByPackId(packId);
+    _manifest = await addonRepository.getManifestByIdAsync(packId);
+    _elements.addAll(await addonRepository.listElementsByPackId(packId));
 
     _loading = false;
     notifyListeners();
-    return _elements != null;
+    return _manifest != null;
   }
 
-  void selectElement(String path, [String? name]) {
-    _packElementPath = path;
-    _packElementName = name;
+  void select(PackElementInfo elementId) {
+    _selected.add(elementId);
+    notifyListeners();
+  }
+
+  void unselectAll() {
+    _selected.clear();
     notifyListeners();
   }
 }

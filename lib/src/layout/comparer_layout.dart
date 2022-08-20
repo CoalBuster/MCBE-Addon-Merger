@@ -24,19 +24,19 @@ class ComparerLayout extends AnimatedWidget {
       appBar: AppBar(
         title: const Text('Pack Comparison'),
       ),
-      body: ComparerView(
-        basePack: mergeController.basePack!,
-        comparePack: mergeController.comparePack!,
-        diff: mergeController.diff,
-        onDiffSelected: (diff) => _onDiffSelected(context, diff),
-      ),
+      // body: ComparerView(
+      //   basePack: mergeController.basePack!,
+      //   comparePack: mergeController.comparePack!,
+      //   diff: mergeController.diff,
+      //   onDiffSelected: (diff) => _onDiffSelected(context, diff),
+      // ),
     );
   }
 
   void _onDiffSelected(BuildContext context, PackDifference difference) {
     // packController.packContent = mergeController.basePackContent;
-    packController.patches = difference.patches;
-    packController.selectElement(difference.filename);
-    Navigator.restorablePushNamed(context, PackElementLayout.routeName);
+    // packController.patches = difference.patches;
+    // packController.selectElement(difference.filename);
+    // Navigator.restorablePushNamed(context, PackElementLayout.routeName);
   }
 }

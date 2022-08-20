@@ -22,8 +22,8 @@ class AddonPicker {
     final result = await FilePicker.platform.pickFiles(
       dialogTitle: 'Select Addon or Pack',
       allowMultiple: false,
-      type: FileType.custom,
-      allowedExtensions: ['mcaddon', 'mcpack'],
+      type: FileType.any,
+      // allowedExtensions: ['mcaddon', 'mcpack'],
       withData: true,
       withReadStream: false,
     );

@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../controller/pack_controller.dart';
+import '../controller/element_controller.dart';
 import '../view/pack_element_view.dart';
 
 class PackElementLayout extends StatelessWidget {
   static const routeName = '/pack/element';
 
-  final PackController packController;
+  final PackElementController elementController;
 
   const PackElementLayout({
-    required this.packController,
+    required this.elementController,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final element = packController.selectedElement;
-    final name = packController.selectedElementName ?? element?.name;
-    final path = packController.selectedElementPath;
-    final patches = packController.patches;
+    // final element = elementController.selectedElement;
+    // final name = elementController.selectedElementName ?? element?.name;
+    // final path = elementController.selectedElementPath;
+    // final patches = elementController.patches;
+    final name = elementController.name;
+    final path = elementController.path;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,17 +36,14 @@ class PackElementLayout extends StatelessWidget {
           ],
         ),
       ),
-      body: element == null
-          ? const Center(
-              child: Text('No Element selected'),
-            )
-          : PackElementDetailView(
-              addonRepository: packController.addonRepository,
-              element: element,
-              name: name,
-              pack: packController.pack,
-              patches: patches,
-            ),
+      body: PackElementDetailView(
+        elementController: elementController,
+        // addonRepository: packController.addonRepository,
+        // element: element,
+        // name: name,
+        // pack: packController.pack,
+        // patches: patches,
+      ),
     );
   }
 }

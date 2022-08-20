@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as paths;
 
 import '../model/module_type.dart';
 import '../model/pack_element.dart';
@@ -7,14 +8,15 @@ import '../util/pluralizer.dart';
 class PackContentSliver extends StatelessWidget {
   final List<PackElementInfo> content;
   final Iterable<ModuleType> moduleTypes;
-  final Function(PackElementType type, String path, [String? name])?
-      onElementSelected;
+  final Function(PackElementInfo elementInfo)? onElementSelected;
+  final List<PackElementInfo> selected;
 
   const PackContentSliver({
     required this.content,
     required this.moduleTypes,
     Key? key,
     this.onElementSelected,
+    this.selected = const [],
   }) : super(key: key);
 
   @override
@@ -49,12 +51,14 @@ class PackContentSliver extends StatelessWidget {
                   .pluralText('controller', 'controllers')),
               children: animControllers
                   .map((e) => ListTile(
-                        title: Text(e.name ?? e.path),
+                        title: Text(
+                          e.name ?? e.path,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(e.path),
-                        onTap: () => onElementSelected?.call(
-                            PackElementType.animationControllers,
-                            e.path,
-                            e.name),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
@@ -71,10 +75,14 @@ class PackContentSliver extends StatelessWidget {
                   Text(anims.length.pluralText('animation', 'animations')),
               children: anims
                   .map((e) => ListTile(
-                        title: Text(e.name ?? e.path),
+                        title: Text(
+                          e.name ?? e.path,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(e.path),
-                        onTap: () => onElementSelected?.call(
-                            PackElementType.animations, e.path, e.name),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
@@ -91,10 +99,14 @@ class PackContentSliver extends StatelessWidget {
                   .pluralText('entity', 'entities', '(server-side)')),
               children: entities
                   .map((e) => ListTile(
-                        title: Text(e.name ?? e.path),
+                        title: Text(
+                          e.name ?? e.path,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(e.path),
-                        onTap: () => onElementSelected?.call(
-                            PackElementType.entity, e.path),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
@@ -110,10 +122,14 @@ class PackContentSliver extends StatelessWidget {
               subtitle: Text(items.length.pluralText('item', 'items')),
               children: items
                   .map((e) => ListTile(
-                        title: Text(e.name ?? e.path),
+                        title: Text(
+                          e.name ?? e.path,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(e.path),
-                        onTap: () => onElementSelected?.call(
-                            PackElementType.item, e.path),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
@@ -129,9 +145,14 @@ class PackContentSliver extends StatelessWidget {
               subtitle: Text(lootTables.length.pluralText('pool', 'pools')),
               children: lootTables
                   .map((e) => ListTile(
-                        title: Text(e.path),
-                        onTap: () => onElementSelected?.call(
-                            PackElementType.item, e.path),
+                        title: Text(
+                          paths.basenameWithoutExtension(e.path),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(e.path),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
@@ -147,9 +168,14 @@ class PackContentSliver extends StatelessWidget {
               subtitle: Text(recipes.length.pluralText('recipe', 'recipes')),
               children: recipes
                   .map((e) => ListTile(
-                        title: Text(e.name ?? e.path),
+                        title: Text(
+                          e.name ?? e.path,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(e.path),
-                        onTap: () => onElementSelected?.call(e.type, e.path),
+                        selected: selected.contains(e),
+                        onTap: () => onElementSelected?.call(e),
                       ))
                   .toList(),
             ),
