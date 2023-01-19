@@ -86,7 +86,8 @@ class SingleOrList<T> {
         'items': json is List ? json : [json],
       }, fromJsonT);
 
-  dynamic toJson() => items.length == 1 ? jsonEncode(items.single) : items;
+  dynamic toJson() =>
+      items.length == 1 ? jsonDecode(jsonEncode(items.single)) : items;
 }
 
 // class SingleOrList<T> implements JsonConverter<List<T>, dynamic> {

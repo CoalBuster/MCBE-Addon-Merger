@@ -7,11 +7,14 @@ import 'controller/element_controller.dart';
 import 'controller/merge_controller.dart';
 import 'controller/pack_controller.dart';
 import 'controller/addon_controller.dart';
+import 'layout/category_layout.dart';
 import 'layout/compare_selection_layout.dart';
 import 'layout/comparer_layout.dart';
+import 'layout/element_layout.dart';
 import 'layout/main_layout.dart';
 import 'layout/pack_detail_layout.dart';
 import 'layout/pack_element_layout.dart';
+import 'layout/pack_layout.dart';
 import 'repository/addon_picker.dart';
 import 'settings/settings_controller.dart';
 
@@ -20,7 +23,7 @@ class AddonMergerApp extends StatelessWidget {
   final AddonPicker addonPicker;
   final PackElementController elementController;
   final Logger logger;
-  final MergeController mergeController;
+  // final MergeController mergeController;
   final PackController packController;
   final SettingsController settingsController;
 
@@ -29,7 +32,7 @@ class AddonMergerApp extends StatelessWidget {
     required this.addonPicker,
     required this.elementController,
     required this.logger,
-    required this.mergeController,
+    // required this.mergeController,
     required this.packController,
     required this.settingsController,
     Key? key,
@@ -57,46 +60,43 @@ class AddonMergerApp extends StatelessWidget {
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
           routes: {
-            ComparerLayout.routeName: (context) => ComparerLayout(
-                  mergeController: mergeController,
-                  packController: packController,
-                ),
-            CompareSelectionLayout.routeName: (context) =>
-                CompareSelectionLayout(
-                  addonPicker: addonPicker,
-                  mergeController: mergeController,
-                ),
+            // ComparerLayout.routeName: (context) => ComparerLayout(
+            //       mergeController: mergeController,
+            //       packController: packController,
+            //     ),
+            // CompareSelectionLayout.routeName: (context) =>
+            //     CompareSelectionLayout(
+            //       addonPicker: addonPicker,
+            //       mergeController: mergeController,
+            //     ),
             MainLayout.routeName: (context) => MainLayout(
                   addonController: addonController,
                   addonPicker: addonPicker,
                   elementController: elementController,
                   logger: logger,
-                  mergeController: mergeController,
+                  // mergeController: mergeController,
                   packController: packController,
                 ),
-            PackDetailLayout.routeName: (context) => PackDetailLayout(
+            PackLayout.routeName: (context) => PackLayout(
                   elementController: elementController,
-                  logger: logger,
                   packController: packController,
                 ),
-            PackElementLayout.routeName: (context) => PackElementLayout(
+            // CategoryLayout.routeName: (context) => CategoryLayout(
+            //       elementController: elementController,
+            //       packController: packController,
+            //     ),
+            ElementLayout.routeName: (context) => ElementLayout(
                   elementController: elementController,
                 ),
+            // PackDetailLayout.routeName: (context) => PackDetailLayout(
+            //       elementController: elementController,
+            //       logger: logger,
+            //       packController: packController,
+            //     ),
+            // PackElementLayout.routeName: (context) => PackElementLayout(
+            //       elementController: elementController,
+            //     ),
           },
-          // onGenerateRoute: (RouteSettings routeSettings) {
-          //   switch (routeSettings.name) {
-          //     case AddonLayout.routeName:
-          //       addonController.loadAsync();
-          //       return MaterialPageRoute<Pack>(
-          //         settings: routeSettings,
-          //         builder: (BuildContext context) => AddonLayout(
-          //           addonController: addonController,
-          //         ),
-          //       );
-          //     default:
-          //       return null;
-          //   }
-          // },
         );
       },
     );

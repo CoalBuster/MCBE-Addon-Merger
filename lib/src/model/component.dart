@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mcbe_addon_merger/src/model/parameter.dart';
 
 import 'effect.dart';
 import 'saturation.dart';
@@ -6,17 +7,8 @@ import 'trigger.dart';
 
 part 'component.g.dart';
 
-class ComponentParam<T> {
-  final String name;
-  final T value;
-
-  Type get type => T.runtimeType;
-
-  ComponentParam(this.name, this.value);
-}
-
 abstract class Component {
-  List<ComponentParam> get parameters;
+  List<Parameter> get parameters;
   String? get name;
   String? get summary;
 
@@ -27,6 +19,8 @@ class Components {
   static const _components = {
     'minecraft:food': FoodComponent.fromJson,
     'minecraft:interact': InteractComponent.fromJson,
+    'minecraft:insomnia': InsomniaComponent.fromJson,
+    'minecraft:pushable': PushableComponent.fromJson,
     'minecraft:seed': SeedComponent.fromJson,
   };
 
@@ -85,11 +79,11 @@ class FoodComponent implements Component {
 
   @override
   get parameters => [
-        ComponentParam('Effects', effects),
-        ComponentParam('Nutrition', nutrition),
-        ComponentParam('Saturation', saturationModifier),
-        ComponentParam('On Use', onUseAction),
-        ComponentParam('Using Converts To', usingConvertsTo),
+        Parameter<List<Effect>>('Effects', '/effects'),
+        Parameter<int>('Nutrition', '/nutrition'),
+        Parameter<Saturation>('Saturation', '/saturation_modifier'),
+        Parameter<String>('On Use', '/on_use_action'),
+        Parameter<String>('Using Converts To', '/using_converts_to'),
       ];
 
   factory FoodComponent.fromJson(Map<String, dynamic> json) =>
@@ -116,11 +110,11 @@ class InteractComponent implements Component {
 
   @override
   get parameters => interactions
-      .map((e) => ComponentParam(e.interactText ?? 'Interaction', e))
+      .asMap()
+      .entries
+      .map((e) => Parameter<Interaction>(
+          e.value.interactText ?? 'Interaction', '/interactions/${e.key}'))
       .toList();
-  // [
-  //       ComponentParam('Interactions', interactions),
-  //     ];
 
   factory InteractComponent.fromJson(Map<String, dynamic> json) {
     if (json['interactions'] is Map<String, dynamic>) {
@@ -164,6 +158,69 @@ class Interaction {
           : '\nEvent: ${onInteract.event} on ${onInteract.target ?? 'self'}');
 }
 
+/// Entity experiences insomnia
+@JsonSerializable(fieldRename: FieldRename.snake)
+class InsomniaComponent implements Component {
+  final int daysUntilInsomnia;
+
+  InsomniaComponent({
+    required this.daysUntilInsomnia,
+  });
+
+  @override
+  String? get name => 'Insomnia';
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter<int>('Days until insomnia', '/days_until_insomnia'),
+      ];
+
+  @override
+  String? get summary => 'Phantoms after $daysUntilInsomnia days';
+
+  factory InsomniaComponent.fromJson(Map<String, dynamic> json) =>
+      _$InsomniaComponentFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$InsomniaComponentToJson(this);
+}
+
+/// Entity can be pushed around
+@JsonSerializable(fieldRename: FieldRename.snake)
+class PushableComponent implements Component {
+  final bool isPushable;
+  final bool isPushableByPiston;
+
+  PushableComponent({
+    required this.isPushable,
+    required this.isPushableByPiston,
+  });
+
+  @override
+  String? get name => 'Pushable';
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter<bool>('Pushable', '/is_pushable'),
+        Parameter<bool>('Pushable by piston', '/is_pushable_by_piston')
+      ];
+
+  @override
+  String? get summary => isPushable
+      ? isPushableByPiston
+          ? 'Pushable, also by piston'
+          : 'Pushable, but not by piston'
+      : isPushableByPiston
+          ? 'Only pushable by piston'
+          : 'Not pushable';
+
+  factory PushableComponent.fromJson(Map<String, dynamic> json) =>
+      _$PushableComponentFromJson(json);
+
+  @override
+  Map<String, dynamic> toJson() => _$PushableComponentToJson(this);
+}
+
 /// Item that can be planted
 @JsonSerializable(fieldRename: FieldRename.snake)
 class SeedComponent implements Component {
@@ -183,8 +240,8 @@ class SeedComponent implements Component {
 
   @override
   get parameters => [
-        ComponentParam('Plant At', plantAt),
-        ComponentParam('Get Crop', cropResult),
+        Parameter<List<String>>('Plant At', '/plant_at'),
+        Parameter<String>('Get Crop', '/crop_result'),
       ];
 
   factory SeedComponent.fromJson(Map<String, dynamic> json) {
@@ -221,7 +278,7 @@ class UnknownComponent extends Component {
   get parameters => json is Map<String, dynamic>
       ? (json as Map<String, dynamic>)
           .entries
-          .map((e) => ComponentParam(e.key, e.value))
+          .map((e) => Parameter(e.key, '/${e.key}'))
           .toList()
       : [];
 

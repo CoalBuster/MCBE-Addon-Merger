@@ -1,9 +1,11 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'component.dart';
 import 'loot.dart';
 import 'loot_condition.dart';
+import 'parameter.dart';
 import 'range.dart';
 import 'version.dart';
 
@@ -19,6 +21,13 @@ enum PackElementType {
   recipeShaped,
   recipeShapeless,
   unknown;
+
+  IconData asIcon() {
+    switch (this) {
+      default:
+        return Icons.ac_unit;
+    }
+  }
 
   String asString() {
     switch (this) {
@@ -135,6 +144,8 @@ abstract class PackElement {
 
   PackElement();
 
+  List<Parameter> get parameters;
+
   dynamic toJson();
 }
 
@@ -211,6 +222,11 @@ class AnimationControllersElement extends PackElement {
   });
 
   @override
+  List<Parameter> get parameters => [
+        Parameter<Map<String, dynamic>>('Controllers', '/controllers'),
+      ];
+
+  @override
   String get type => 'animation_controllers';
 
   factory AnimationControllersElement.fromJson(dynamic json) =>
@@ -259,6 +275,11 @@ class AnimationsElement extends PackElement {
   });
 
   @override
+  List<Parameter> get parameters => animations.entries
+      .map((e) => Parameter<Map<String, dynamic>>(e.key, '/${e.key}'))
+      .toList();
+
+  @override
   String get type => 'animations';
 
   factory AnimationsElement.fromJson(dynamic json) =>
@@ -300,6 +321,11 @@ class ItemElement extends PackElement {
   });
 
   @override
+  List<Parameter> get parameters => [
+        Parameter<String>('Identifier', '/description/identifier'),
+      ];
+
+  @override
   String get type => 'minecraft:item';
 
   factory ItemElement.fromJson(dynamic json) => _$ItemElementFromJson(json);
@@ -333,6 +359,14 @@ class LootPoolsElement extends PackElement {
     required this.pools,
     // required super.type,
   });
+
+  @override
+  List<Parameter> get parameters => pools
+      .asMap()
+      .entries
+      .map((e) =>
+          Parameter<Map<String, dynamic>>('Pool ${e.key + 1}', '/${e.key}'))
+      .toList();
 
   @override
   String get type => 'pools';
@@ -393,6 +427,17 @@ class ServerEntityElement extends PackElement {
 
   Map<String, Map<String, Component>?>? get groups => componentGroups
       ?.map((key, value) => MapEntry(key, Components.fromJson(value)));
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter<String>('Identifier', '/description/identifier'),
+        Parameter<bool>('Is Spawnable', '/description/is_spawnable'),
+        Parameter<bool>('Can be summoned', '/description/is_summonable'),
+        Parameter<bool>('Is Experimental', '/description/is_experimental'),
+        Parameter<Map<String, dynamic>>(
+            'Animations', '/description/animations'),
+        Parameter<bool>('Scripts', '/description/scripts'),
+      ];
 
   @override
   String get type => 'minecraft:entity';
@@ -464,6 +509,16 @@ class ShapedRecipeElement extends PackElement {
   });
 
   @override
+  List<Parameter> get parameters => [
+        Parameter<bool>('Identifier', '/description/identifier'),
+        Parameter<bool>('Group', '/group'),
+        Parameter<bool>('Tags', '/tags'),
+        Parameter<bool>('Legenda', '/key'),
+        Parameter<bool>('Pattern', '/pattern'),
+        Parameter<bool>('Result', '/result'),
+      ];
+
+  @override
   String get type => 'minecraft:recipe_shaped';
 
   factory ShapedRecipeElement.fromJson(dynamic json) =>
@@ -487,6 +542,11 @@ class ShapelessRecipeElement extends PackElement {
     required this.tags,
     // required super.type,
   });
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter<bool>('Identifier', '/description/identifier'),
+      ];
 
   @override
   String get type => 'minecraft:recipe_shapeless';
@@ -557,6 +617,11 @@ class UnknownElement extends PackElement {
   UnknownElement({
     required this.json,
   });
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter<dynamic>('json', '/'),
+      ];
 
   @override
   String get type => 'unknown';

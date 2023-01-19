@@ -66,6 +66,28 @@ Map<String, dynamic> _$InteractionToJson(Interaction instance) =>
       'use_item': instance.useItem,
     };
 
+InsomniaComponent _$InsomniaComponentFromJson(Map<String, dynamic> json) =>
+    InsomniaComponent(
+      daysUntilInsomnia: json['days_until_insomnia'] as int,
+    );
+
+Map<String, dynamic> _$InsomniaComponentToJson(InsomniaComponent instance) =>
+    <String, dynamic>{
+      'days_until_insomnia': instance.daysUntilInsomnia,
+    };
+
+PushableComponent _$PushableComponentFromJson(Map<String, dynamic> json) =>
+    PushableComponent(
+      isPushable: json['is_pushable'] as bool,
+      isPushableByPiston: json['is_pushable_by_piston'] as bool,
+    );
+
+Map<String, dynamic> _$PushableComponentToJson(PushableComponent instance) =>
+    <String, dynamic>{
+      'is_pushable': instance.isPushable,
+      'is_pushable_by_piston': instance.isPushableByPiston,
+    };
+
 SeedComponent _$SeedComponentFromJson(Map<String, dynamic> json) =>
     SeedComponent(
       cropResult: json['crop_result'] as String,

@@ -26,10 +26,10 @@ void main() async {
     logger: logger,
   );
 
-  final mergeController = MergeController(
-    addonRepository: addonRepository,
-    logger: logger,
-  );
+  // final mergeController = MergeController(
+  //   addonRepository: addonRepository,
+  //   logger: logger,
+  // );
 
   final packController = PackController(
     addonRepository: addonRepository,
@@ -53,7 +53,7 @@ void main() async {
     addonPicker: addonPicker,
     elementController: elementController,
     logger: logger,
-    mergeController: mergeController,
+    // mergeController: mergeController,
     packController: packController,
     settingsController: settingsController,
   ));

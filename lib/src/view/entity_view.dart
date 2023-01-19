@@ -106,33 +106,33 @@ Animate: ${entity.description.scripts?.animate?.join(', ')}
 
   Widget _buildComponent(String componentName, Component component,
       [String? groupName]) {
-    if (component.parameters.isEmpty) {
-      return ListTile(
-        title: Text(component.name ?? componentName),
-        subtitle: component.summary == null ? null : Text(component.summary!),
-      );
-    }
-
-    return ExpansionTile(
-      expandedAlignment: Alignment.centerLeft,
-      expandedCrossAxisAlignment: CrossAxisAlignment.start,
-      childrenPadding: const EdgeInsets.symmetric(horizontal: 24),
+    // if (component.parameters.isEmpty) {
+    return ListTile(
       title: Text(component.name ?? componentName),
       subtitle: component.summary == null ? null : Text(component.summary!),
-      children: component.parameters.map((e) {
-        if (e.value is bool) {
-          return SwitchListTile(
-            title: Text(e.name),
-            value: e.value,
-            onChanged: (i) {},
-          );
-        }
-        return ListTile(
-          title: Text(e.name),
-          subtitle: Text(e.value.toString()),
-        );
-      }).toList(),
     );
+    // }
+
+    // return ExpansionTile(
+    //   expandedAlignment: Alignment.centerLeft,
+    //   expandedCrossAxisAlignment: CrossAxisAlignment.start,
+    //   childrenPadding: const EdgeInsets.symmetric(horizontal: 24),
+    //   title: Text(component.name ?? componentName),
+    //   subtitle: component.summary == null ? null : Text(component.summary!),
+    //   children: component.parameters.map((e) {
+    //     if (e.value is bool) {
+    //       return SwitchListTile(
+    //         title: Text(e.name),
+    //         value: e.value,
+    //         onChanged: (i) {},
+    //       );
+    //     }
+    //     return ListTile(
+    //       title: Text(e.name),
+    //       subtitle: Text(e.value.toString()),
+    //     );
+    //   }).toList(),
+    // );
   }
 
   List<Patch>? _diff(String path) {
