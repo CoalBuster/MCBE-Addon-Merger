@@ -41,8 +41,7 @@ class AnimationControllerDetailView extends StatelessWidget {
               .map((e) => ListTile(
                     title: Text(e.key),
                     subtitle: Text(e.value.transitions
-                            ?.map((e) =>
-                                '-> ${e.keys.single} (${e.values.single})')
+                            ?.map((e) => '-> ${e.state} (${e.condition})')
                             .join('\n') ??
                         'No transitions'),
                   ))

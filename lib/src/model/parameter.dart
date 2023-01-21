@@ -6,3 +6,12 @@ class Parameter<T> {
 
   Parameter(this.name, this.path);
 }
+
+abstract class Parameterized {
+  List<Parameter> parameters([String? name]);
+}
+
+abstract class Named {
+  String? get name => null;
+  dynamic get value;
+}

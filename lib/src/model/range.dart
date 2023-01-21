@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mcbe_addon_merger/src/model/pack_element.dart';
 
+import 'parameter.dart';
+
 part 'range.g.dart';
 
 class CountOrRange {
@@ -73,12 +75,15 @@ class IntegerRange {
 
 @JsonSerializable(
     fieldRename: FieldRename.snake, genericArgumentFactories: true)
-class SingleOrList<T> {
+class SingleOrList<T> extends Named {
   final List<T> items;
 
   SingleOrList({
     required this.items,
   });
+
+  @override
+  get value => items;
 
   factory SingleOrList.fromJson(
           dynamic json, T Function(Object? json) fromJsonT) =>

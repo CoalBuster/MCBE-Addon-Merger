@@ -138,13 +138,11 @@ class PackElementInfo {
   });
 }
 
-abstract class PackElement {
+abstract class PackElement implements Parameterized {
   @JsonKey(ignore: true)
   String get type;
 
   PackElement();
-
-  List<Parameter> get parameters;
 
   dynamic toJson();
 }
@@ -222,8 +220,11 @@ class AnimationControllersElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => [
-        Parameter<Map<String, dynamic>>('Controllers', '/controllers'),
+  List<Parameter> parameters([String? name]) => [
+        if (controllers[name]?.initialState != null)
+          Parameter<Map<String, dynamic>>(
+              'Initial State', '/$name/initial_state'),
+        Parameter<Map<String, dynamic>>('States', '/$name/states'),
       ];
 
   @override
@@ -238,9 +239,11 @@ class AnimationControllersElement extends PackElement {
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class AnimationControllerEntry {
+  final String? initialState;
   final Map<String, AnimationControllerState> states;
 
   AnimationControllerEntry({
+    required this.initialState,
     required this.states,
   });
 
@@ -251,17 +254,77 @@ class AnimationControllerEntry {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class AnimationControllerState {
-  final List<Map<String, String>>? transitions;
+class AnimationControllerState implements Parameterized {
+  final List<String>? animations;
+  final List<String>? onEntry;
+  final List<AnimationControllerTransition>? transitions;
 
   AnimationControllerState({
+    required this.animations,
+    required this.onEntry,
     required this.transitions,
   });
+
+  @override
+  List<Parameter> parameters([String? name]) => [
+        if (animations != null) Parameter('Animations', '/animations'),
+        if (onEntry != null) Parameter('On Entry', '/on_entry'),
+        if (transitions != null) Parameter('Transitions', '/transitions')
+      ];
+  // +
+  // (transitions?.asMap().entries.map((e) {
+  //       var to = e.value.keys.first;
+
+  //       return Parameter<List>(
+  //           'Transition to \'$to\' when', '/transitions/${e.key}/$to');
+  //     }).toList() ??
+  //     []);
 
   factory AnimationControllerState.fromJson(Map<String, dynamic> json) =>
       _$AnimationControllerStateFromJson(json);
 
   Map<String, dynamic> toJson() => _$AnimationControllerStateToJson(this);
+}
+
+class AnimationControllerTransition implements Named {
+  final String condition;
+  final String state;
+
+  AnimationControllerTransition({
+    required this.condition,
+    required this.state,
+  });
+
+  @override
+  get name => '-> \'$state\'';
+
+  @override
+  get value => 'Condition: $condition';
+
+  // @override
+  // List<Parameter> parameters([String? name]) =>
+  //     [
+  //       if (animations != null) Parameter('Animations', '/animations'),
+  //       if (onEntry != null) Parameter('On Entry', '/on_entry'),
+  //       if (transitions != null) Parameter('Transitions', '/transitions')
+  //     ] +
+  //     (transitions?.asMap().entries.map((e) {
+  //           var to = e.value.keys.first;
+
+  //           return Parameter<List>(
+  //               'Transition to \'$to\' when', '/transitions/${e.key}/$to');
+  //         }).toList() ??
+  //         []);
+
+  factory AnimationControllerTransition.fromJson(Map<String, dynamic> json) =>
+      json.entries
+          .map((e) => AnimationControllerTransition(
+                condition: e.value,
+                state: e.key,
+              ))
+          .single;
+
+  Map<String, dynamic> toJson() => {state: condition};
 }
 
 /// Collection of animations
@@ -275,9 +338,11 @@ class AnimationsElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => animations.entries
-      .map((e) => Parameter<Map<String, dynamic>>(e.key, '/${e.key}'))
-      .toList();
+  List<Parameter> parameters([String? name]) => [
+        Parameter<Map<String, dynamic>>('Loop Animation', '/$name/loop'),
+        Parameter<Map<String, dynamic>>('Duration', '/$name/animation_length'),
+        Parameter<Map<String, dynamic>>('Timeline', '/$name/timeline'),
+      ];
 
   @override
   String get type => 'animations';
@@ -321,7 +386,7 @@ class ItemElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => [
+  List<Parameter> parameters([String? name]) => [
         Parameter<String>('Identifier', '/description/identifier'),
       ];
 
@@ -361,7 +426,7 @@ class LootPoolsElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => pools
+  List<Parameter> parameters([String? name]) => pools
       .asMap()
       .entries
       .map((e) =>
@@ -429,7 +494,7 @@ class ServerEntityElement extends PackElement {
       ?.map((key, value) => MapEntry(key, Components.fromJson(value)));
 
   @override
-  List<Parameter> get parameters => [
+  List<Parameter> parameters([String? name]) => [
         Parameter<String>('Identifier', '/description/identifier'),
         Parameter<bool>('Is Spawnable', '/description/is_spawnable'),
         Parameter<bool>('Can be summoned', '/description/is_summonable'),
@@ -437,6 +502,8 @@ class ServerEntityElement extends PackElement {
         Parameter<Map<String, dynamic>>(
             'Animations', '/description/animations'),
         Parameter<bool>('Scripts', '/description/scripts'),
+        Parameter('Components', '/components'),
+        Parameter('Component Groups', '/component_groups'),
       ];
 
   @override
@@ -509,7 +576,7 @@ class ShapedRecipeElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => [
+  List<Parameter> parameters([String? name]) => [
         Parameter<bool>('Identifier', '/description/identifier'),
         Parameter<bool>('Group', '/group'),
         Parameter<bool>('Tags', '/tags'),
@@ -544,7 +611,7 @@ class ShapelessRecipeElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => [
+  List<Parameter> parameters([String? name]) => [
         Parameter<bool>('Identifier', '/description/identifier'),
       ];
 
@@ -619,7 +686,7 @@ class UnknownElement extends PackElement {
   });
 
   @override
-  List<Parameter> get parameters => [
+  List<Parameter> parameters([String? name]) => [
         Parameter<dynamic>('json', '/'),
       ];
 

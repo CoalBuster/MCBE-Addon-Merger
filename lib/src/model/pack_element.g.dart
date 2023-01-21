@@ -24,6 +24,7 @@ Map<String, dynamic> _$AnimationControllersElementToJson(
 AnimationControllerEntry _$AnimationControllerEntryFromJson(
         Map<String, dynamic> json) =>
     AnimationControllerEntry(
+      initialState: json['initial_state'] as String?,
       states: (json['states'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(
             k, AnimationControllerState.fromJson(e as Map<String, dynamic>)),
@@ -33,20 +34,30 @@ AnimationControllerEntry _$AnimationControllerEntryFromJson(
 Map<String, dynamic> _$AnimationControllerEntryToJson(
         AnimationControllerEntry instance) =>
     <String, dynamic>{
+      'initial_state': instance.initialState,
       'states': instance.states,
     };
 
 AnimationControllerState _$AnimationControllerStateFromJson(
         Map<String, dynamic> json) =>
     AnimationControllerState(
+      animations: (json['animations'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      onEntry: (json['on_entry'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       transitions: (json['transitions'] as List<dynamic>?)
-          ?.map((e) => Map<String, String>.from(e as Map))
+          ?.map((e) =>
+              AnimationControllerTransition.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
 Map<String, dynamic> _$AnimationControllerStateToJson(
         AnimationControllerState instance) =>
     <String, dynamic>{
+      'animations': instance.animations,
+      'on_entry': instance.onEntry,
       'transitions': instance.transitions,
     };
 
