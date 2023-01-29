@@ -84,7 +84,7 @@ class ParametersView extends StatelessWidget {
               ? value[int.parse(seg)]
               : value is Map
                   ? value[seg]
-                  : value.toJson()[seg];
+                  : value.toJson()[int.tryParse(seg) ?? seg];
     }
 
     return value;
@@ -178,7 +178,7 @@ class _ParameterItemView extends StatelessWidget {
 
       return ListTile(
         title: Text(name),
-        trailing: const Icon(Icons.arrow_forward),
+        trailing: selected ? const Icon(Icons.arrow_forward) : null,
         onTap: () => onTap?.call(path),
         selected: selected,
       );
@@ -194,14 +194,15 @@ class _ParameterItemView extends StatelessWidget {
 
     if (value is Named) {
       return ListTile(
-        title: Text(name),
+        title: Text(value.name ?? name),
         subtitle: Text(value.value.toString()),
       );
     }
 
     return ListTile(
       title: Text(name),
-      subtitle: value == null ? null : Text(value.toString()),
+      subtitle:
+          value == null ? const Text('<not set>') : Text(value.toString()),
     );
   }
 }

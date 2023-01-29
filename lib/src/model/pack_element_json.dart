@@ -3,6 +3,10 @@ import 'package:json_annotation/json_annotation.dart';
 import 'component.dart';
 import 'loot.dart';
 import 'loot_condition.dart';
+import 'manifest_dependency.dart';
+import 'manifest_header.dart';
+import 'manifest_module.dart';
+import 'module_type.dart';
 import 'pack_element.dart';
 import 'parameter.dart';
 import 'range.dart';
@@ -248,9 +252,8 @@ class LootPoolsElement extends PackJsonElement {
   @override
   List<Parameter> get parameters => pools
       .asMap()
-      .entries
-      .map((e) =>
-          Parameter<Map<String, dynamic>>('Pool ${e.key + 1}', '/${e.key}'))
+      .keys
+      .map((key) => Parameter<Map<String, dynamic>>('Pool ${key + 1}', '/$key'))
       .toList();
 
   @override
@@ -264,7 +267,7 @@ class LootPoolsElement extends PackJsonElement {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class LootTable {
+class LootTable implements Parameterized {
   @LootConditions()
   final List<LootCondition>? conditions;
   final List<LootEntry>? entries;
@@ -282,6 +285,14 @@ class LootTable {
       entries == null || entries!.isEmpty || (rolls == null && tiers == null);
 
   bool get isTiered => tiers != null;
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter('Amount of rolls', '/rolls'),
+        Parameter('Tiers', '/tiers'),
+        Parameter('Conditions', '/conditions'),
+        Parameter('Loot table entries', '/entries'),
+      ];
 
   int get totalWeight =>
       entries
@@ -399,12 +410,12 @@ class ShapedRecipeElement extends PackJsonElement {
 
   @override
   List<Parameter> get parameters => [
-        Parameter<bool>('Identifier', '/description/identifier'),
-        Parameter<bool>('Group', '/group'),
-        Parameter<bool>('Tags', '/tags'),
-        Parameter<bool>('Legenda', '/key'),
-        Parameter<bool>('Pattern', '/pattern'),
-        Parameter<bool>('Result', '/result'),
+        Parameter('Shaped Recipe', '/description/identifier'),
+        Parameter('Group', '/group'),
+        Parameter('Tags', '/tags'),
+        Parameter('Legenda', '/key'),
+        Parameter('Pattern', '/pattern'),
+        Parameter('Result', '/result'),
       ];
 
   @override
@@ -436,7 +447,10 @@ class ShapelessRecipeElement extends PackJsonElement {
 
   @override
   List<Parameter> get parameters => [
-        Parameter<bool>('Identifier', '/description/identifier'),
+        Parameter('Shapeless Recipe', '/description/identifier'),
+        Parameter('Tags', '/tags'),
+        Parameter('Ingredients', '/ingredients'),
+        Parameter('Result', '/result'),
       ];
 
   @override
@@ -482,6 +496,12 @@ class RecipeIngredient {
       _$RecipeIngredientFromJson(json);
 
   Map<String, dynamic> toJson() => _$RecipeIngredientToJson(this);
+
+  @override
+  String toString() =>
+      item +
+      (data == null ? '' : ' (data: $data)') +
+      (count == null ? '' : ' x$count');
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)

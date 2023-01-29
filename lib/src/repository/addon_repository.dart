@@ -35,20 +35,29 @@ class AddonRepository {
     throw UnimplementedError();
   }
 
-  Future<PackJsonElement?> getJsonElementByPathAsync(
-      String packId, String elementPath) async {
+  Future<PackElement?> getElementByPathAsync(
+      String packId, PackElementInfo elementId) async {
     final entry = _entries.singleWhere((e) => e.manifest.header.uuid == packId);
     final elementFullPath =
-        paths.posix.normalize(paths.posix.join(entry.path, elementPath));
+        paths.posix.normalize(paths.posix.join(entry.path, elementId.path));
     final elementFile = entry.archive.findFile(elementFullPath);
 
-    if (paths.extension(elementFullPath) != '.json' || elementFile == null) {
-      return null;
+    switch (elementId.category) {
+      case PackElementCategory.animationControllers:
+      case PackElementCategory.animations:
+      case PackElementCategory.entity:
+      case PackElementCategory.item:
+      case PackElementCategory.lootTable:
+      case PackElementCategory.recipe:
+        return _parseJsonElement(path: elementId.path, file: elementFile!)
+            .values
+            .singleOrNull;
+      case PackElementCategory.image:
+      case PackElementCategory.unknown:
+        return null;
+      case PackElementCategory.manifest:
+        return _readManifest(elementFile!);
     }
-
-    return _parseJsonElement(path: elementPath, file: elementFile)
-        .values
-        .singleOrNull;
   }
 
   Future<Uint8List?> getFileContentByPathAsync(
@@ -152,6 +161,14 @@ class AddonRepository {
 
     switch (packFileExtension) {
       case '.json':
+        if (paths.basenameWithoutExtension(file.name) == 'manifest') {
+          return PackElementInfo(
+            category: PackElementCategory.manifest,
+            displayName: 'Manifest',
+            path: packFilePath,
+          );
+        }
+
         return _parseJsonElementInfo(path: packFilePath, file: file);
       case '.png':
         return PackElementInfo(
@@ -174,7 +191,7 @@ class AddonRepository {
       final json = jsonDecode(utf8.decode(file.content));
       return const PackJsonElements().fromJson(json);
     } catch (e, s) {
-      logger.w('Could not parse ${paths.basename(file.name)}: $e\n$s');
+      logger.w('Could not parse ${paths.basename(file.name)}: $e');
       return {};
     }
   }

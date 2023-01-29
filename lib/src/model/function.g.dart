@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'function.dart';
+part of 'loot_function.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

@@ -9,6 +9,7 @@ enum PackElementCategory {
   image,
   item,
   lootTable,
+  manifest,
   recipe,
   unknown;
 
@@ -19,6 +20,7 @@ enum PackElementCategory {
     PackElementCategory.image: 'Image',
     PackElementCategory.item: 'Item',
     PackElementCategory.lootTable: 'Loot Table',
+    PackElementCategory.manifest: 'Manifest',
     PackElementCategory.recipe: 'Recipe',
   };
 

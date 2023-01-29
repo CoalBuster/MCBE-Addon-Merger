@@ -23,7 +23,6 @@ class AddonPicker {
       dialogTitle: 'Select Addon or Pack',
       allowMultiple: false,
       type: FileType.any,
-      // allowedExtensions: ['mcaddon', 'mcpack'],
       withData: true,
       withReadStream: false,
     );

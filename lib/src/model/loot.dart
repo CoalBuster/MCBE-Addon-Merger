@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'function.dart';
+
+import 'loot_function.dart';
+import 'parameter.dart';
 import 'range.dart';
 
 part 'loot.g.dart';
@@ -34,7 +36,7 @@ class LootTier {
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
-class LootEntry {
+class LootEntry implements Parameterized {
   @LootFunctions()
   final List<LootFunction>? functions;
   final String? name;
@@ -47,6 +49,14 @@ class LootEntry {
     this.functions,
     this.name,
   });
+
+  @override
+  List<Parameter> get parameters => [
+        Parameter('Type', '/type'),
+        Parameter('Name', '/name'),
+        Parameter('Weight', '/weight'),
+        Parameter('Functions', '/functions'),
+      ];
 
   factory LootEntry.fromJson(Map<String, dynamic> json) =>
       _$LootEntryFromJson(json);

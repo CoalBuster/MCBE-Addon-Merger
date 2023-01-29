@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:mcbe_addon_merger/src/repository/addon_picker.dart';
 
 import '../model/manifest.dart';
+import '../repository/addon_picker.dart';
 import '../repository/addon_repository.dart';
 
 class AddonController with ChangeNotifier {

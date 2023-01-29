@@ -17,13 +17,10 @@ class PackElementController with ChangeNotifier {
     required this.addonRepository,
   });
 
-  // String? get childName => _elementId?.childName;
   PackElementCategory? get category => _elementId?.category;
   String? get displayName => _elementId?.displayName;
   PackElement? get element => _element;
-  // Version? get formatVersion => _elementId?.formatVersion;
   bool get loading => _loading;
-  // String? get name => _elementId?.name;
   String? get packId => _packId;
   String? get path => _elementId?.path;
   List<Patch>? get patches => _patches;
@@ -44,10 +41,7 @@ class PackElementController with ChangeNotifier {
     _packId = packId;
     _elementId = elementId;
 
-    if (elementId.category.isJson) {
-      _element = await addonRepository.getJsonElementByPathAsync(
-          packId, elementId.path);
-    }
+    _element = await addonRepository.getElementByPathAsync(packId, elementId);
 
     _loading = false;
     notifyListeners();

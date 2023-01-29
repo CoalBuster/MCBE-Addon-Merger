@@ -83,18 +83,6 @@ class _PackLayoutState extends State<PackLayout> {
                 ),
             ],
           ),
-          // body: mobile
-          //     ? _category == null
-          //         ? CategoriesView(
-          //             categories: widget.packController.categories,
-          //             onCategorySelected: (type) =>
-          //                 _onCategorySelected(context, type),
-          //           )
-          //         : ElementsView(elements: _importantElements())
-          //     : _PackWideLayout(
-          //         elementController: widget.elementController,
-          //         packController: widget.packController,
-          //       ),
         );
       },
     );
@@ -106,64 +94,3 @@ class _PackLayoutState extends State<PackLayout> {
     Navigator.restorablePushNamed(context, ElementLayout.routeName);
   }
 }
-
-//   _onCategorySelected(BuildContext context, PackElementType type) {
-//     setState(() {
-//       _category = type;
-//     });
-//     // packController.category = type;
-//     // Navigator.restorablePushNamed(context, CategoryLayout.routeName);
-//   }
-// }
-
-// class _PackWideLayout extends AnimatedWidget {
-//   final PackElementController elementController;
-//   final PackController packController;
-
-//   _PackWideLayout({
-//     required this.elementController,
-//     required this.packController,
-//     Key? key,
-//   }) : super(
-//           key: key,
-//           listenable: Listenable.merge([elementController, packController]),
-//         );
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final elements = _importantElements(packController);
-
-//     return Padding(
-//       padding: const EdgeInsets.symmetric(horizontal: 32),
-//       child: ElementsView(
-//         elements: elements,
-//         onElementSelected: (e) => _onElementSelected(context, e),
-//       ),
-//     );
-//   }
-
-//   _onElementSelected(BuildContext context, PackElementInfo element) {
-//     elementController.loadElementByIdAsync(packController.id!, element);
-//     Navigator.restorablePushNamed(context, ElementLayout.routeName);
-//   }
-// }
-
-// List<PackElementInfo> _importantElements(PackController packController) {
-//   return packController.elements.where((element) {
-//     switch (element.type) {
-//       case PackElementType.entity:
-//         return element.name == 'minecraft:player';
-//       case PackElementType.recipeShaped:
-//       case PackElementType.recipeShapeless:
-//         return true;
-//       case PackElementType.animationControllers:
-//       case PackElementType.animations:
-//       case PackElementType.image:
-//       case PackElementType.item:
-//       case PackElementType.lootTable:
-//       case PackElementType.unknown:
-//       default:
-//         return false;
-//     }
-//   }).toList();
-// }
