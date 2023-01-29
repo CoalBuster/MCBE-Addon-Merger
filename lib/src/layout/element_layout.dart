@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:json_patch/json_patch.dart';
 
 import '../controller/element_controller.dart';
-import '../model/pack_element_json.dart';
-import '../view/components_view.dart';
+import '../util/json_pointer_ext.dart';
 import '../view/parameters_view.dart';
 
 class ElementLayout extends StatefulWidget {
@@ -20,11 +20,18 @@ class ElementLayout extends StatefulWidget {
 }
 
 class _ElementLayoutState extends State<ElementLayout> {
+  var path = JsonPointer.fromString('');
+  late PageController pageController;
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final mobile = constraints.maxWidth < 850;
+        pageController = PageController(
+          viewportFraction: mobile ? 1 : 1 / 3,
+          initialPage: path.isRoot ? 0 : path.segments.length - 1,
+        );
 
         return Scaffold(
           appBar: AppBar(
@@ -38,60 +45,38 @@ class _ElementLayoutState extends State<ElementLayout> {
                 ),
               ],
             ),
+            leading: mobile && path.hasParent
+                ? BackButton(
+                    onPressed: () => setState(() => path = path.parent),
+                  )
+                : null,
           ),
-          // drawer: mobile
-          //     ? Drawer(
-          //         child: _EDL(
-          //           elementController: widget.elementController,
-          //         ),
-          //       )
-          //     : null,
-          body: Row(
-            children: [
-              Expanded(
-                child: ParametersView(
+          body: mobile
+              ? ParametersView(
                   object: widget.elementController.element,
-                  name: widget.elementController.displayName,
-                  // parameters: widget.elementController.element!
-                  //     .parameters(widget.elementController.name),
+                  path: path,
+                  onItemSelected: (p) => setState(() => path = p),
+                )
+              : PageView(
+                  controller: pageController,
+                  children: List.generate(
+                    path.segments.length + 1,
+                    (index) => ParametersView(
+                      object: widget.elementController.element,
+                      path: path.up(index),
+                      onItemSelected: (p) => setState(() {
+                        path = p;
+                        pageController.animateToPage(
+                            path.isRoot ? 0 : path.segments.length - 1,
+                            duration: const Duration(milliseconds: 400),
+                            curve: Curves.ease);
+                      }),
+                      selected: index == 0 ? null : path.up(index - 1),
+                    ),
+                  ).reversed.toList(),
                 ),
-              ),
-              // Expanded(
-              //   child: _ElementDetailView(
-              //     element: widget.elementController.element,
-              //     name: widget.elementController.name,
-              //   ),
-              // ),
-              // SizedBox(
-              //   width: 300,
-              //   child: _EDL(
-              //     elementController: widget.elementController,
-              //   ),
-              // ),
-            ],
-          ),
         );
       },
-    );
-  }
-}
-
-class _EDL extends StatelessWidget {
-  final PackElementController elementController;
-
-  _EDL({
-    required this.elementController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        ComponentsView(
-            components: (elementController.element as ServerEntityElement?)
-                    ?.components ??
-                {})
-      ],
     );
   }
 }
