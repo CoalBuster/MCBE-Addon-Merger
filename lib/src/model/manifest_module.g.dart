@@ -15,7 +15,7 @@ ManifestModule _$ManifestModuleFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ManifestModuleToJson(ManifestModule instance) =>
     <String, dynamic>{
-      'type': _$ModuleTypeEnumMap[instance.type],
+      'type': _$ModuleTypeEnumMap[instance.type]!,
       'uuid': instance.uuid,
       'version': Version.toJson(instance.version),
     };

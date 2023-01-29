@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 import '../controller/element_controller.dart';
-import '../controller/pack_controller.dart';
 import '../model/pack_element.dart';
-import '../view/manifest_view.dart';
-import '../view/pack_detail_view.dart';
-import '../view/pack_element_view.dart';
-import 'pack_element_layout.dart';
 
 class PackElementLayout extends AnimatedWidget {
   static const routeName = '/pack/element';

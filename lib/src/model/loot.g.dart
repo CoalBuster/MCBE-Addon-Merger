@@ -32,7 +32,7 @@ Map<String, dynamic> _$LootEntryToJson(LootEntry instance) => <String, dynamic>{
       'functions':
           instance.functions?.map(const LootFunctions().toJson).toList(),
       'name': instance.name,
-      'type': _$LootTypeEnumMap[instance.type],
+      'type': _$LootTypeEnumMap[instance.type]!,
       'weight': instance.weight,
     };
 

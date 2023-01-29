@@ -24,7 +24,7 @@ class PackLayout extends StatefulWidget {
 }
 
 class _PackLayoutState extends State<PackLayout> {
-  PackElementType? _category;
+  PackElementCategory? _category;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +77,7 @@ class _PackLayoutState extends State<PackLayout> {
                   flex: 2,
                   child: ElementsView(
                     elements: widget.packController.elements
-                        .where((e) => e.type == _category),
+                        .where((e) => e.category == _category),
                     onElementSelected: (e) => _onElementSelected(context, e),
                   ),
                 ),

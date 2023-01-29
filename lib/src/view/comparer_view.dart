@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../model/manifest.dart';
 import '../model/pack_difference.dart';
-import '../model/pack_element.dart';
+import '../model/pack_element_json.dart';
 import '../model/pack_image.dart';
 import '../util/pluralizer.dart';
 

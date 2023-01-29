@@ -13,7 +13,7 @@ Patch _$PatchFromJson(Map<String, dynamic> json) => Patch(
     );
 
 Map<String, dynamic> _$PatchToJson(Patch instance) => <String, dynamic>{
-      'op': _$PatchOperationEnumMap[instance.operation],
+      'op': _$PatchOperationEnumMap[instance.operation]!,
       'path': instance.path,
       'value': instance.value,
     };

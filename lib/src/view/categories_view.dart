@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../model/pack_element.dart';
 
 class CategoriesView extends StatelessWidget {
-  final List<PackElementType> categories;
-  final Function(PackElementType type)? onCategorySelected;
-  final PackElementType? selected;
+  final List<PackElementCategory> categories;
+  final Function(PackElementCategory type)? onCategorySelected;
+  final PackElementCategory? selected;
 
   const CategoriesView({
     required this.categories,

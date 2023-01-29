@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_patch/json_patch.dart';
+import 'package:mcbe_addon_merger/src/model/range.dart';
 
 import '../model/parameter.dart';
 import '../util/pluralizer.dart';
@@ -46,7 +47,7 @@ class _ParametersViewState extends State<ParametersView> {
     var root = _buildItem(
       name: 'ROOT',
       json: widget.object,
-      path: widget.name == null ? path : '/${widget.name}$path',
+      path: path, //widget.name == null ? path : '/${widget.name}$path',
     );
     var parameters = root.children!
         .map((e) => _buildItem(
@@ -98,11 +99,13 @@ class _ParametersViewState extends State<ParametersView> {
     var pointer = JsonPointer.fromString(path);
 
     for (var seg in pointer.segments) {
-      value = value is List
-          ? value[int.parse(seg)]
-          : value is Map
-              ? value[seg]
-              : value.toJson()[seg];
+      value = value is SingleOrList
+          ? value.items[int.parse(seg)]
+          : value is List
+              ? value[int.parse(seg)]
+              : value is Map
+                  ? value[seg]
+                  : value.toJson()[seg];
     }
 
     return value;
@@ -117,15 +120,7 @@ class _ParametersViewState extends State<ParametersView> {
     var title = name;
 
     if (path.isNotEmpty) {
-      var pointer = JsonPointer.fromString(path);
-
-      for (var seg in pointer.segments) {
-        value = value is List
-            ? value[int.parse(seg)]
-            : value is Map
-                ? value[seg]
-                : value.toJson()[seg];
-      }
+      value = _traverse(value, path);
     }
 
     if (value is Named) {
@@ -134,14 +129,14 @@ class _ParametersViewState extends State<ParametersView> {
     }
 
     if (value is Parameterized) {
-      var params = value.parameters();
+      var params = value.parameters;
 
       return _ParameterItem(
         title: title,
         path: path,
         children: params.map((e) => _ParameterItem(
               title: e.name,
-              path: e.path,
+              path: path + e.path,
             )),
       );
     }
@@ -193,19 +188,26 @@ class _ParameterItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final value = object;
+    var entries = value is Map
+        ? value.keys
+        : value is List
+            ? value
+            : value is Parameterized
+                ? value.parameters
+                : value is SingleOrList
+                    ? value.items
+                    : null;
 
-    if (value is Map) {
+    if (entries != null) {
+      if (entries.isEmpty) {
+        return ListTile(
+          title: Text(name),
+        );
+      }
+
       return ListTile(
         title: Text(name),
-        trailing: const Icon(Icons.arrow_forward),
-        onTap: () => onTap?.call(path),
-      );
-    }
-
-    if (value is List) {
-      return ListTile(
-        title: Text(name),
-        subtitle: Text(value.length.pluralText('Entry', 'Entries')),
+        // subtitle: Text(entries.length.pluralText('Entry', 'Entries')),
         trailing: const Icon(Icons.arrow_forward),
         onTap: () => onTap?.call(path),
       );
@@ -216,6 +218,13 @@ class _ParameterItemView extends StatelessWidget {
         title: Text(name),
         value: value,
         onChanged: (i) {},
+      );
+    }
+
+    if (value is Named) {
+      return ListTile(
+        title: Text(name),
+        subtitle: Text(value.value.toString()),
       );
     }
 

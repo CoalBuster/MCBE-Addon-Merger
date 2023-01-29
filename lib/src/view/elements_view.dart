@@ -25,7 +25,7 @@ class ElementsView extends StatelessWidget {
           crossAxisSpacing: 8,
           children: elements
               .map((e) => _ElementItemView(
-                    title: e.name ?? e.path,
+                    title: e.displayName,
                     icon: Icons.ac_unit,
                     onTap: () => onElementSelected?.call(e),
                   ))

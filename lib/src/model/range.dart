@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:mcbe_addon_merger/src/model/pack_element.dart';
+import 'package:mcbe_addon_merger/src/model/pack_element_json.dart';
 
 import 'parameter.dart';
 

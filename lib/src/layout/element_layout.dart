@@ -1,13 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:json_patch/json_patch.dart';
-import 'package:mcbe_addon_merger/src/util/pluralizer.dart';
 
 import '../controller/element_controller.dart';
-import '../model/pack_element.dart';
-import '../model/parameter.dart';
-import '../model/range.dart';
+import '../model/pack_element_json.dart';
 import '../view/components_view.dart';
 import '../view/parameters_view.dart';
 
@@ -37,9 +31,9 @@ class _ElementLayoutState extends State<ElementLayout> {
             title: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.elementController.name ?? 'Element Detail'),
+                Text(widget.elementController.displayName ?? 'Element Detail'),
                 Text(
-                  widget.elementController.type!.asString(),
+                  widget.elementController.category!.asString(),
                   style: const TextStyle(fontSize: 12),
                 ),
               ],
@@ -57,7 +51,7 @@ class _ElementLayoutState extends State<ElementLayout> {
               Expanded(
                 child: ParametersView(
                   object: widget.elementController.element,
-                  name: widget.elementController.name,
+                  name: widget.elementController.displayName,
                   // parameters: widget.elementController.element!
                   //     .parameters(widget.elementController.name),
                 ),

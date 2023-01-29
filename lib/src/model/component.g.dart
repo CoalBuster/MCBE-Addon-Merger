@@ -23,7 +23,7 @@ Map<String, dynamic> _$FoodComponentToJson(FoodComponent instance) =>
       'effects': instance.effects,
       'nutrition': instance.nutrition,
       'on_use_action': instance.onUseAction,
-      'saturation_modifier': _$SaturationEnumMap[instance.saturationModifier],
+      'saturation_modifier': _$SaturationEnumMap[instance.saturationModifier]!,
       'using_converts_to': instance.usingConvertsTo,
     };
 

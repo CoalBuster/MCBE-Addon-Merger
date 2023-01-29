@@ -7,15 +7,30 @@ import 'trigger.dart';
 
 part 'component.g.dart';
 
-abstract class Component {
-  List<Parameter> get parameters;
+abstract class Component implements Parameterized {
   String? get name;
   String? get summary;
 
   dynamic toJson();
 }
 
-class Components {
+class ComponentGroups extends JsonConverter<
+    Map<String, Map<String, Component>>?, Map<String, dynamic>?> {
+  const ComponentGroups();
+
+  @override
+  Map<String, Map<String, Component>>? fromJson(Map<String, dynamic>? json) =>
+      json?.map(
+          (key, value) => MapEntry(key, const Components().fromJson(value)!));
+
+  @override
+  Map<String, dynamic>? toJson(Map<String, Map<String, Component>>? object) =>
+      object?.map(
+          (key, value) => MapEntry(key, const Components().toJson(value)));
+}
+
+class Components
+    extends JsonConverter<Map<String, Component>?, Map<String, dynamic>?> {
   static const _components = {
     'minecraft:food': FoodComponent.fromJson,
     'minecraft:interact': InteractComponent.fromJson,
@@ -26,7 +41,8 @@ class Components {
 
   const Components();
 
-  static Map<String, Component>? fromJson(Map<String, dynamic>? json) {
+  @override
+  Map<String, Component>? fromJson(Map<String, dynamic>? json) {
     if (json == null) {
       return null;
     }
@@ -38,14 +54,15 @@ class Components {
         )));
   }
 
-  static Map<String, dynamic>? toJson(Map<String, Component>? components) {
-    if (components == null) {
+  @override
+  Map<String, dynamic>? toJson(Map<String, Component>? object) {
+    if (object == null) {
       return null;
     }
 
-    return Map.fromEntries(components.entries.map((e) => MapEntry(
+    return Map.fromEntries(object.entries.map((e) => MapEntry(
           e.key,
-          e.value.toJson(),
+          e.value,
         )));
   }
 }
@@ -113,7 +130,8 @@ class InteractComponent implements Component {
       .asMap()
       .entries
       .map((e) => Parameter<Interaction>(
-          e.value.interactText ?? 'Interaction', '/interactions/${e.key}'))
+          e.value.interactText ?? 'Nameless interaction',
+          '/interactions/${e.key}'))
       .toList();
 
   factory InteractComponent.fromJson(Map<String, dynamic> json) {

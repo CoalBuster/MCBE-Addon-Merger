@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/pack_element.dart';
+import '../model/pack_element_json.dart';
 import '../model/version.dart';
 
 class AnimationDetailView extends StatelessWidget {

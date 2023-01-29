@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../model/pack_element.dart';
 import '../model/patch.dart';
-import '../model/version.dart';
 import '../repository/addon_repository.dart';
 
 class PackElementController with ChangeNotifier {
@@ -18,14 +17,16 @@ class PackElementController with ChangeNotifier {
     required this.addonRepository,
   });
 
+  // String? get childName => _elementId?.childName;
+  PackElementCategory? get category => _elementId?.category;
+  String? get displayName => _elementId?.displayName;
   PackElement? get element => _element;
-  Version? get formatVersion => _elementId?.formatVersion;
+  // Version? get formatVersion => _elementId?.formatVersion;
   bool get loading => _loading;
-  String? get name => _elementId?.name;
+  // String? get name => _elementId?.name;
   String? get packId => _packId;
   String? get path => _elementId?.path;
   List<Patch>? get patches => _patches;
-  PackElementType? get type => _elementId?.type;
 
   void clear() {
     _packId = null;
@@ -42,28 +43,31 @@ class PackElementController with ChangeNotifier {
 
     _packId = packId;
     _elementId = elementId;
-    _element =
-        await addonRepository.getElementByPathAsync(packId, elementId.path);
+
+    if (elementId.category.isJson) {
+      _element = await addonRepository.getJsonElementByPathAsync(
+          packId, elementId.path);
+    }
 
     _loading = false;
     notifyListeners();
     return _element != null;
   }
 
-  Future<bool> loadElementDiffByIdAsync(
-      String packId, PackElementInfo elementId) async {
-    clear();
-    _loading = true;
-    notifyListeners();
+  // Future<bool> loadElementDiffByIdAsync(
+  //     String packId, PackElementInfo elementId) async {
+  //   clear();
+  //   _loading = true;
+  //   notifyListeners();
 
-    _packId = packId;
-    _elementId = elementId;
-    _element =
-        await addonRepository.getElementByPathAsync(packId, elementId.path);
-    // diff =
+  //   _packId = packId;
+  //   _elementId = elementId;
+  //   _element =
+  //       await addonRepository.getElementByPathAsync(packId, elementId.path);
+  //   // diff =
 
-    _loading = false;
-    notifyListeners();
-    return _element != null;
-  }
+  //   _loading = false;
+  //   notifyListeners();
+  //   return _element != null;
+  // }
 }

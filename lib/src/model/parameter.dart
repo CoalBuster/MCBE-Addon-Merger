@@ -8,7 +8,7 @@ class Parameter<T> {
 }
 
 abstract class Parameterized {
-  List<Parameter> parameters([String? name]);
+  List<Parameter> get parameters;
 }
 
 abstract class Named {

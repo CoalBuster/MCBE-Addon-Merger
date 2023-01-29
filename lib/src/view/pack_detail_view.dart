@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../controller/pack_controller.dart';
-import '../layout/pack_element_layout.dart';
 import '../model/pack_element.dart';
 import '../view/manifest_view.dart';
-import '../sliver/pack_content_sliver.dart';
 
 class PackDetailView extends AnimatedWidget {
   final Function(PackElementInfo elementInfo)? onElementSelected;

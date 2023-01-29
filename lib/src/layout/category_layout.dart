@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../controller/element_controller.dart';
 import '../controller/pack_controller.dart';
-import '../model/pack_element.dart';
+import '../model/pack_element_json.dart';
 import '../view/elements_view.dart';
 import 'element_layout.dart';
 

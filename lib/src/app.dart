@@ -4,16 +4,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger/logger.dart';
 
 import 'controller/element_controller.dart';
-import 'controller/merge_controller.dart';
 import 'controller/pack_controller.dart';
 import 'controller/addon_controller.dart';
-import 'layout/category_layout.dart';
-import 'layout/compare_selection_layout.dart';
-import 'layout/comparer_layout.dart';
 import 'layout/element_layout.dart';
 import 'layout/main_layout.dart';
-import 'layout/pack_detail_layout.dart';
-import 'layout/pack_element_layout.dart';
 import 'layout/pack_layout.dart';
 import 'repository/addon_picker.dart';
 import 'settings/settings_controller.dart';

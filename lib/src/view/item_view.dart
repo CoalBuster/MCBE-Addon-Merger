@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../model/component.dart';
-import '../model/pack_element.dart';
+import '../model/pack_element_json.dart';
 import '../model/version.dart';
 import 'tile/patched_tile.dart';
 

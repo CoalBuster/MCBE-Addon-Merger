@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'pack_element.dart';
+part of 'pack_element_json.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -92,15 +92,15 @@ Map<String, dynamic> _$AnimationEntryToJson(AnimationEntry instance) =>
     };
 
 ItemElement _$ItemElementFromJson(Map<String, dynamic> json) => ItemElement(
-      components:
-          Components.fromJson(json['components'] as Map<String, dynamic>?),
+      components: const Components()
+          .fromJson(json['components'] as Map<String, dynamic>?),
       description:
           ItemDescription.fromJson(json['description'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$ItemElementToJson(ItemElement instance) =>
     <String, dynamic>{
-      'components': Components.toJson(instance.components),
+      'components': const Components().toJson(instance.components),
       'description': instance.description,
     };
 
@@ -153,11 +153,10 @@ Map<String, dynamic> _$LootTableToJson(LootTable instance) => <String, dynamic>{
 
 ServerEntityElement _$ServerEntityElementFromJson(Map<String, dynamic> json) =>
     ServerEntityElement(
-      componentGroups: (json['component_groups'] as Map<String, dynamic>?)?.map(
-        (k, e) => MapEntry(k, e as Map<String, dynamic>),
-      ),
-      components:
-          Components.fromJson(json['components'] as Map<String, dynamic>?),
+      componentGroups: const ComponentGroups()
+          .fromJson(json['component_groups'] as Map<String, dynamic>?),
+      components: const Components()
+          .fromJson(json['components'] as Map<String, dynamic>?),
       description: ServerEntityDescription.fromJson(
           json['description'] as Map<String, dynamic>),
     );
@@ -165,8 +164,9 @@ ServerEntityElement _$ServerEntityElementFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$ServerEntityElementToJson(
         ServerEntityElement instance) =>
     <String, dynamic>{
-      'component_groups': instance.componentGroups,
-      'components': Components.toJson(instance.components),
+      'component_groups':
+          const ComponentGroups().toJson(instance.componentGroups),
+      'components': const Components().toJson(instance.components),
       'description': instance.description,
     };
 

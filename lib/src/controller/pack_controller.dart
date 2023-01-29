@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../model/manifest.dart';
 import '../model/pack_element.dart';
 import '../repository/addon_repository.dart';
@@ -7,7 +6,7 @@ import '../repository/addon_repository.dart';
 class PackController with ChangeNotifier {
   final AddonRepository addonRepository;
 
-  PackElementType? _category;
+  PackElementCategory? _category;
   final List<PackElementInfo> _elements = [];
   bool _loading = false;
   Manifest? _manifest;
@@ -17,10 +16,10 @@ class PackController with ChangeNotifier {
     required this.addonRepository,
   });
 
-  List<PackElementType> get categories =>
-      _elements.map((e) => e.type).toSet().toList();
+  List<PackElementCategory> get categories =>
+      _elements.map((e) => e.category).toSet().toList();
   // PackElementType? get category => _category;
-  List<PackElementInfo> get elements => _elementsSplitByName();
+  List<PackElementInfo> get elements => _elements;
   //_selectedElementsByCategorySplitByName().toList();
   String? get id => _manifest?.header.uuid;
   bool get loading => _loading;
@@ -63,15 +62,15 @@ class PackController with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  List<PackElementInfo> _elementsSplitByName() {
-    return _elements
-        // .where((e) => e.type == _category)
-        .expand((e) => (e.name ?? e.path).split(',').map((n) => PackElementInfo(
-              path: e.path,
-              type: e.type,
-              name: n.trim(),
-              formatVersion: e.formatVersion,
-            )))
-        .toList();
-  }
+  // List<PackElementInfo> _elementsSplitByName() {
+  //   return _elements
+  //       // .where((e) => e.type == _category)
+  //       .expand((e) => (e.name ?? e.path).split(',').map((n) => PackElementInfo(
+  //             path: e.path,
+  //             type: e.type,
+  //             name: n.trim(),
+  //             formatVersion: e.formatVersion,
+  //           )))
+  //       .toList();
+  // }
 }

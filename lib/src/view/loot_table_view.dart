@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 
 import '../model/loot.dart';
-import '../model/pack_element.dart';
+import '../model/pack_element_json.dart';
 import '../model/version.dart';
 
 class LootTableDetailView extends StatelessWidget {
